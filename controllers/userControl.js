@@ -1,4 +1,4 @@
-var userModel = require('./../models/userModel.js'); //Create user model
+const User = require('./../models/User.js');
 
 module.exports = {
   // Passport does most of this. We just have to send back the response.
@@ -14,8 +14,7 @@ module.exports = {
       console.log("no req.user!");
       return res.send();
     }
-    // req.user is a passport functionality
-    userModel.findById(req.user._id).exec(function (err, result) {
+    User.findById(req.user._id).exec(function (err, result) {
       if (err) {
         return res.send(err);
       }
@@ -24,7 +23,7 @@ module.exports = {
   },
 
   read: function(req, res) {
-    userModel.findById(req.params.id).exec(function (err, result) {
+    User.findById(req.params.id).exec(function (err, result) {
       if (err) {
         return res.send(err);
       }
@@ -32,8 +31,8 @@ module.exports = {
     });
   },
 
-  getall: function(req, res) {
-    userModel.find(req.query).exec(function (err, result) {
+  getAll: function(req, res) {
+    User.find(req.query).exec(function (err, result) {
       if (err) {
         res.send(err);
       }
@@ -42,7 +41,7 @@ module.exports = {
   },
 
   update: function(req, res){
-    userModel.findByIdAndUpdate(req.params.id, req.body, function(err, result){
+    User.findByIdAndUpdate(req.params.id, req.body, function(err, result){
       if (err) {
         return res.send(err);
       }
@@ -51,8 +50,7 @@ module.exports = {
   },
 
   delete: function(req, res){
-    console.log(req.user._id, req.params.id);
-    userModel.findByIdAndRemove(req.params.id, req.body, function(err, result){
+    User.findByIdAndRemove(req.params.id, req.body, function(err, result){
       if (err) {
         res.send(err);
       }

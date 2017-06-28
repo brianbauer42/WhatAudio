@@ -8,6 +8,7 @@
     "body-parser": "^1.17.2",
     "cors": "^2.8.3",
     "express": "^4.15.3",
+    "express-formidable": "^1.0.0",
     "express-session": "^1.15.3",
     "mongoose": "^4.11.0",
     "passport": "^0.3.2",

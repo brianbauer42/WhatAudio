@@ -4,6 +4,9 @@
 # webpack build
 /static
 
+# includes plaintext credentials
+config.js
+
 # production
 /build
 
