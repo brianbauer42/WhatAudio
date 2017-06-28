@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Switch, Route } from 'react-router-dom'
 import MenuSlider from './MenuSlider';
 import Playlist from './Playlist';
 import AdminPanel from './AdminPanel';
