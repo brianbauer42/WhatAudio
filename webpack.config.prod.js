@@ -7,7 +7,7 @@ module.exports = {
   },
   devtool: 'source-map',
   entry: [
-    './src/index.js'
+    './client/index.js'
   ],
   output: {
     path: path.join(__dirname, 'static'),
@@ -33,7 +33,7 @@ module.exports = {
         test: /\.js$/,
         loader: 'babel-loader',
         exclude: '/node_modules/',
-        include: path.join(__dirname, 'src'),
+        include: path.join(__dirname, 'client'),
         query: {
           plugins: ['transform-runtime'],
           presets: ['es2015', 'react']

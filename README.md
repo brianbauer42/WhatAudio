@@ -5,5 +5,5 @@ I've long admired the format of leftasrain.com and wanted to build something sim
 ## Setup Instructions:
 Rename *config_example.js* to *config.js*  
 The *sessionSecret* variable must contain a random string within quotes  
-Set the *mongoUri* variable to point to your instance of mongodb. This URI string should contain your database credentials if needed.
+Set the *mongoUri* variable to point to your instance of mongodb. This URI string should contain your database credentials if needed.  
 Navigate to the download location in your terminal and type *npm run go*
