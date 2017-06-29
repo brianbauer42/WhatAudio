@@ -4,7 +4,10 @@ class Player extends Component {
   render() {
     return (
       <div className="player">
-        <h2>This is where the Player goes!</h2>
+        <h3>Spoon - Chicago at Night</h3>
+        <div className="audioControls"></div>
+        <div className="audioControls"></div>
+        <div className="audioControls"></div>
       </div>
     );
   }

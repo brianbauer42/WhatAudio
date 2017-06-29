@@ -1,24 +1,75 @@
-.App {
+.invisible {
+  display: none;
+}
+
+.searchForm {
+  float: right;
+  display: inline;
+  margin: 20px;
+}
+
+.searchForm > input {
+  border-radius: 5px;
+}
+
+.banner {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  display: inline-block;
+  font-size: 3em;
+}
+
+.header {
   text-align: center;
 }
 
-.App-logo {
-  animation: App-logo-spin infinite 20s linear;
-  height: 80px;
+.openMenuButton {
+  margin: 20px;
+  float: left;
+  display: inline;
 }
 
-.App-header {
-  background-color: #222;
-  height: 150px;
+.openMenuButton:hover {
+  color: darkslategray;
+}
+
+.openMenuButton:active {
+  color: #FA5555;
+}
+
+.menuSlider {
+  position: fixed;
+  width: 240px;
+  height: 100vw;
+  transform: translate3d(-100vw, 0, 0);
+}
+
+.closeMenuButton {
+  position: absolute;
+  right: 20px;
+  top: 20px;
+}
+
+.albumArt {
   padding: 20px;
-  color: white;
+  height: 180px;
+  width: 180px;
+  border-radius: 8px;
+  display: inline;
 }
 
-.App-intro {
-  font-size: large;
+.postBody {
+  display: inline-block;
+  float: right;
 }
 
-@keyframes App-logo-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+.trackCard {
+  border: 3px solid black;
+  border-radius: 8px;
+  margin: 10px;
+}
+
+.playlist, .contact, .adminPanel {
+  padding-left: 80px;
+  padding-right: 80px;
 }
