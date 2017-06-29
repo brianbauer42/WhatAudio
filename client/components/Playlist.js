@@ -5,7 +5,9 @@ class Playlist extends Component {
     return (
       <div className="playlist">
         <div className="trackCard">
-          <img className="albumArt" src="https://i.imgur.com/L5RDDvU.jpg" alt="album cover" />
+          <div className="artContainer">
+            <img className="albumArt" src="https://i.imgur.com/L5RDDvU.jpg" alt="album cover" />
+          </div>
           <div className="postBody">
             <h5>Spoon - Chicago at Night</h5>
             <p>Spoon is the best ever!</p>

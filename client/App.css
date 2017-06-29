@@ -60,16 +60,28 @@
 
 .postBody {
   display: inline-block;
-  float: right;
+  float: left;
 }
 
 .trackCard {
   border: 3px solid black;
   border-radius: 8px;
   margin: 10px;
+  height: 220px;
 }
 
 .playlist, .contact, .adminPanel {
   padding-left: 80px;
   padding-right: 80px;
+}
+
+.audioControls {
+  display: inline;
+  padding-left: 17px;
+  padding-right: 17px;
+}
+
+.artContainer {
+  display: inline;
+  float: left;
 }
