@@ -4,7 +4,7 @@
 
 .searchForm {
   float: right;
-  display: inline;
+  display: run-in;
   margin: 20px;
 }
 
@@ -29,13 +29,17 @@
   display: inline;
 }
 
-.openMenuButton:hover {
+.coloClick:hover {
   color: darkslategray;
 }
 
-.openMenuButton:active {
+.colorClick:active,
+.player > h3:hover,
+.banner:hover {
   color: #FA5555;
 }
+
+
 
 .menuSlider {
   position: fixed;
@@ -84,4 +88,29 @@
 .artContainer {
   display: inline;
   float: left;
+}
+
+.player {
+  display: inline-block;
+  border-radius: 8px;
+  /*border-top-left-radius: 8px;
+  border-top-right-radius: 8px;*/
+  background: black;
+  color: white;
+}
+
+.player > h3 {
+  margin-bottom: 0;
+  margin-top: 8px;
+}
+
+.playerControls {
+  background: white;
+  color: black;
+  border: 6px solid black;
+  border-radius: 12px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  padding-left: 6px;
+  padding-right: 6px;
 }

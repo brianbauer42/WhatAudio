@@ -6,7 +6,7 @@ class MenuSlider extends Component {
     return (
       <div className="menuSlider">
         <h2>Menu</h2>
-          <div className="closeMenuButton">×</div>
+          <div className="closeMenuButton colorClick">×</div>
           <ul>
             <li><NavLink to='/'>Playlist</NavLink></li>
             <li><NavLink to='/admin'>Admin Panel</NavLink></li>

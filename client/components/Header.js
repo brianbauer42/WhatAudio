@@ -5,7 +5,7 @@ class Header extends Component {
   render() {
     return (
       <div className="header">
-        <h1 className="openMenuButton">☰</h1>
+        <h1 className="openMenuButton colorClick">☰</h1>
         <h1 className="banner">∞</h1>
         <form className="searchForm">
           <input type="text" placeholder="search" />
