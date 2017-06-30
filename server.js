@@ -88,9 +88,10 @@ app.get('/', function(req, res){
 });
 
 // Begin serving users
-app.listen(8080, function (err) {
+app.listen((process.env.NODE_ENV === 'production' ? config.productionPort : config.devPort), function (err) {
   if (err) {
     return console.error(err);
   }
-  console.log('Spinning up the sound cannons! Targeting coordinates: 8080');
+  console.log('Spinning up the records! Tune in on the following frequency: '
+  + (process.env.NODE_ENV === 'production' ? config.productionPort : config.devPort));
 });

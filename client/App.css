@@ -2,13 +2,13 @@
   display: none;
 }
 
-.searchForm {
-  float: right;
-  display: run-in;
-  margin: 20px;
+.searchContainer {
+  position: fixed;
+  top: 24px;
+  right: 24px;
 }
 
-.searchForm > input {
+input {
   border-radius: 5px;
 }
 
@@ -17,9 +17,24 @@
   margin-bottom: 10px;
   display: inline-block;
   font-size: 3em;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  text-decoration: none;
 }
 
-.header {
+.banner:hover,
+.openMenuButton {
+  cursor: default;
+}
+
+.headerContainer,
+.contact,
+.loginPage,
+.reegistrationPage {
   text-align: center;
 }
 
@@ -29,8 +44,18 @@
   display: inline;
 }
 
-.coloClick:hover {
+.colorClick {
+  transition-property: color;
+  transition-duration: 1s;
+  transition-timing-function: ease-out;
+}
+
+.colorClick:hover {
   color: darkslategray;
+  cursor: default;
+  transition-property: color;
+  transition-duration: .25s;
+  transition-timing-function: ease-out;
 }
 
 .colorClick:active,
@@ -39,19 +64,51 @@
   color: #FA5555;
 }
 
-
-
-.menuSlider {
+.menuContainer {
   position: fixed;
+  top: 76px;
+  left: 0px;
   width: 240px;
   height: 100vw;
+  background-color: rgba(255, 76, 76, .85);
+  border-top-right-radius: 12px;
+  border-bottom-right-radius: 12px;
+  transition-property: transform;
+  transition-duration: .5s;
+  transition-timing-function: ease-out;
+}
+
+.menuContent {
+  padding-top: 50px;
+  padding-left: 25px;
+}
+
+.menuContent > a {
+  text-decoration: none;
+  color: black;
+  font-weight: bold;
+  font-size: 1.5em;
+}
+
+.menuHide {
   transform: translate3d(-100vw, 0, 0);
+}
+
+.menuShow {
+  transform: translate3d(0, 0, 0);
 }
 
 .closeMenuButton {
   position: absolute;
   right: 20px;
   top: 20px;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  text-decoration: none;
 }
 
 .albumArt {
@@ -68,15 +125,11 @@
 }
 
 .trackCard {
+  display: flex;
   border: 3px solid black;
   border-radius: 8px;
   margin: 10px;
   height: 220px;
-}
-
-.playlist, .contact, .adminPanel {
-  padding-left: 80px;
-  padding-right: 80px;
 }
 
 .audioControls {
@@ -85,18 +138,13 @@
   padding-right: 17px;
 }
 
-.artContainer {
-  display: inline;
-  float: left;
-}
 
 .player {
-  display: inline-block;
+  text-align: center;
   border-radius: 8px;
-  /*border-top-left-radius: 8px;
-  border-top-right-radius: 8px;*/
   background: black;
   color: white;
+  align-self: center;
 }
 
 .player > h3 {
@@ -113,4 +161,31 @@
   padding-bottom: 2px;
   padding-left: 6px;
   padding-right: 6px;
+}
+
+.playerContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.playlistContainer {
+  width: 80vw;
+}
+
+.playlistPage,
+.loginPage,
+.contactPage,
+.adminPage {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 300px;
+}
+
+.playlistContainer,
+.loginContainer,
+.contactContainer,
+.adminContainer {
+  align-self: center;
 }

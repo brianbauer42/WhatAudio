@@ -1,10 +1,13 @@
 import React, { Component } from 'react';
+import { contactPageEmail } from '../../config';
 
 class Contact extends Component {
   render() {
     return (
-      <div className="contact">
-        <h2>contact me! bbauer@student.42.us.org</h2>
+      <div className="contactPage">
+        <div className="contactContainer">
+          <h2>contact me! <br /> {contactPageEmail}</h2>
+        </div>
       </div>
     );
   }

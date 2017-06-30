@@ -1,20 +1,29 @@
 import React, { Component } from 'react';
-import { Switch, Route } from 'react-router-dom'
-import MenuSlider from './MenuSlider';
-import Playlist from './Playlist';
-import AdminPanel from './AdminPanel';
-import Contact from './Contact';
+import ContentArea from './ContentArea.js';
+import Header from './Header.js';
+import MenuSlider from './MenuSlider.js';
+import Player from './Player.js';
 
 class Main extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { showMenu: false };
+    this.toggleMenu = this.toggleMenu.bind(this);
+  }
+  
+  toggleMenu() {
+    const currentState = this.state.showMenu;
+    this.setState({ showMenu: !currentState });
+    console.log("toggleMenu activated! showMenu: " + this.state.showMenu)
+  }
+
   render() {
     return (
-      <div className="main">
-        <MenuSlider />
-        <Switch>
-          <Route exact path='/' component={Playlist}/>
-          <Route path='/admin' component={AdminPanel}/>
-          <Route path='/contact' component={Contact}/>
-        </Switch>
+      <div className="App">
+        <Header toggleMenu={this.toggleMenu} />
+        <Player />
+        <MenuSlider toggleMenu={this.toggleMenu} showMenu={this.state.showMenu} />
+        <ContentArea />
       </div>
     );
   }

@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 class Player extends Component {
   render() {
     return (
-      <div className="structure">
+      <div className="playerContainer">
         <div className="player">
           <h3>Spoon - Chicago at Night</h3>
           <div className="playerControls">
