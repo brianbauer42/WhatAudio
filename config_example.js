@@ -8,17 +8,17 @@ module.exports = {
     },
     mongoUri: "",
     contactPageEmail: "",
+    productionPort: 80,
+    devPort: 8080,
     formidableConfig: {
         keepExtensions: true,
         multiples: true,
         uploadDir: "./tmp"
     },
-    infiniteConfig: {
-        allowRegistrations: false,
-        email: {
-            smtpServer: "",
-            login: "",
-            password: ""
-        }
+    allowRegistrations: false,
+    outgoingEmail: {
+        smtpServer: "",
+        login: "",
+        password: ""
     }
 }

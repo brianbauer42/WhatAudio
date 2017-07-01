@@ -14,7 +14,6 @@ class Main extends Component {
   toggleMenu() {
     const currentState = this.state.showMenu;
     this.setState({ showMenu: !currentState });
-    console.log("toggleMenu activated! showMenu: " + this.state.showMenu)
   }
 
   render() {
