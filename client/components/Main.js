@@ -23,7 +23,7 @@ class Main extends Component {
         <Header toggleMenu={this.toggleMenu} />
         <Player />
         <MenuSlider toggleMenu={this.toggleMenu} showMenu={this.state.showMenu} />
-        <ContentArea />
+        <ContentArea className="contentArea" />
       </div>
     );
   }

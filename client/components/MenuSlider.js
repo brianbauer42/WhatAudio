@@ -3,7 +3,6 @@ import { NavLink } from 'react-router-dom';
 
 class MenuSlider extends Component {
   handleMenuButtonClick(e) {
-    e.preventDefault();
     this.props.toggleMenu();
   }
 
@@ -12,15 +11,15 @@ class MenuSlider extends Component {
       <div className={this.props.showMenu ? "menuContainer menuShow" : "menuContainer menuHide" }>
         <i className='fa fa-times fa-lg colorClick closeMenuButton' onClick={ e => this.handleMenuButtonClick(e) } />
         <div className="menuContent">
-          <NavLink to='/'>Playlist</NavLink>
+          <NavLink className="colorClick" to='/' onClick={ e => this.handleMenuButtonClick(e) }>Playlist</NavLink>
           <br />
-          <NavLink to='/admin'>Admin Panel</NavLink>
+          <NavLink className="colorClick" to='/admin' onClick={ e => this.handleMenuButtonClick(e) }>Admin Panel</NavLink>
           <br />
-          <NavLink to='/login'>Login</NavLink>
+          <NavLink className="colorClick" to='/login' onClick={ e => this.handleMenuButtonClick(e) }>Login</NavLink>
           <br />
-          <NavLink to='/register'>Register</NavLink>
+          <NavLink className="colorClick" to='/register' onClick={ e => this.handleMenuButtonClick(e) }>Register</NavLink>
           <br />
-          <NavLink to='/contact'>Contact</NavLink>
+          <NavLink className="colorClick" to='/contact' onClick={ e => this.handleMenuButtonClick(e) }>Contact</NavLink>
         </div>
       </div>
     );

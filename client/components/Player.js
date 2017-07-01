@@ -5,7 +5,7 @@ class Player extends Component {
     return (
       <div className="playerContainer">
         <div className="player">
-          <h3>Spoon - Chicago at Night</h3>
+          <h3 className="nowPlaying">Spoon - Chicago at Night</h3>
           <div className="playerControls">
             <div className="audioControls"><i className='fa fa-backward fa-2x colorClick' /></div>
             <div className="audioControls"><i className='fa fa-pause-circle-o fa-2x colorClick' /></div>

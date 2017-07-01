@@ -5,15 +5,20 @@ class Login extends Component {
         return(
             <div className="loginPage">
                 <div className="loginContainer">
+                    <h2>Login</h2>
                     <form>
-                        <label>Login</label>
-                        {' '}
-                        <input type='text' placeholder="email@address.com" />
-                        <br />
-                        <label>Password</label>
-                        {' '}
-                        <input type='password' />
-                        <br />
+                        <div >
+                            <label>Email</label>
+                        </div>
+                        <div >
+                            <input type='email' placeholder="email@address.com" />
+                        </div>
+                        <div >
+                            <label>Password</label>
+                        </div>
+                        <div >
+                            <input type='password' />
+                        </div>
                         <button type='submit'>Login</button>
                     </form>
                 </div>

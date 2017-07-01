@@ -6,7 +6,8 @@ class Contact extends Component {
     return (
       <div className="contactPage">
         <div className="contactContainer">
-          <h2>contact me! <br /> {contactPageEmail}</h2>
+          <h2>contact me!</h2>
+          <h2 className="contactAddress">{contactPageEmail}</h2>
         </div>
       </div>
     );

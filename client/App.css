@@ -31,10 +31,7 @@ input {
   cursor: default;
 }
 
-.headerContainer,
-.contact,
-.loginPage,
-.reegistrationPage {
+.headerContainer {
   text-align: center;
 }
 
@@ -44,9 +41,11 @@ input {
   display: inline;
 }
 
+.contactAddress,
+.nowPlaying,
 .colorClick {
   transition-property: color;
-  transition-duration: 1s;
+  transition-duration: .75s;
   transition-timing-function: ease-out;
 }
 
@@ -60,7 +59,9 @@ input {
 
 .colorClick:active,
 .player > h3:hover,
-.banner:hover {
+.banner:hover,
+.contactAddress:hover,
+.isPlaying {
   color: #FA5555;
 }
 
@@ -70,11 +71,14 @@ input {
   left: 0px;
   width: 240px;
   height: 100vw;
-  background-color: rgba(255, 76, 76, .85);
+  background-color: rgba(255, 255, 255, .7);
+  border-top: 6px solid rgba(0, 0, 0, .85);
+  border-right: 6px solid rgba(0, 0, 0, .85);
+  border-bottom: 6px solid rgba(0, 0, 0, .85);
   border-top-right-radius: 12px;
   border-bottom-right-radius: 12px;
   transition-property: transform;
-  transition-duration: .5s;
+  transition-duration: .7s;
   transition-timing-function: ease-out;
 }
 
@@ -109,6 +113,7 @@ input {
   -ms-user-select: none;
   user-select: none;
   text-decoration: none;
+  color: rgba(0, 0, 0, .85);
 }
 
 .albumArt {
@@ -176,16 +181,29 @@ input {
 .playlistPage,
 .loginPage,
 .contactPage,
-.adminPage {
+.adminPage,
+.registrationPage {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 300px;
+  height: 500px;
 }
 
 .playlistContainer,
 .loginContainer,
 .contactContainer,
-.adminContainer {
+.adminContainer,
+.registrationContainer {
   align-self: center;
+}
+
+.contactContainer > h2 {
+  margin: 0;
+}
+
+.adminContainer > form > div > input,
+.loginContainer > form > div > input,
+.registrationContainer > form > div > input {
+  padding: 2px;
+  margin-bottom: 6px;
 }
