@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import request from 'superagent';
 
 class Register extends Component {
     constructor(props) {
@@ -53,10 +54,13 @@ class Register extends Component {
                 console.log(key, value);
             }
             fetch("/api/user/register", {
-                method: "POST",
-                body: regFormData
-            });
-            //this.clearAllFields();
+                method: 'POST',
+                body: regFormData,
+                credentials: 'include'
+            }).then(function(result) {
+                console.log(result);
+            })
+            this.clearAllFields();
         }
     }
 

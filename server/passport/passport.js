@@ -1,8 +1,7 @@
 const LocalStrategy = require('passport-local').Strategy;
 const User = require('./../models/User.js');
 
-module.exports = function(passport) { // Call in passport as a parameter
-
+module.exports = function(passport) {
     // serializeUser prepares session data for transmission by stripping unnecessary user data.
     // Some data such as passwords do not need to be (and shouldn't be) sent with every transmission.
     // Only the mongo _id field is kept so that the rest of the data can be recovered later by deserialize user.
@@ -10,7 +9,6 @@ module.exports = function(passport) { // Call in passport as a parameter
         console.log("USER", user);
         done(null, user.id);
     });
-
 
     // Makes user data available to us in the form of req.user by finding the rest of the
     // data attached to the mongo _id on the incoming request.
@@ -24,13 +22,13 @@ module.exports = function(passport) { // Call in passport as a parameter
     passport.use('local-signup', new LocalStrategy({
             usernameField : 'email',
             passwordField : 'password',
-            passReqToCallback : true  //this makes it so we only need one callback function below
+            passReqToCallback : true
         },
         function(req, email, password, done) {
             // asynchronous
             // User.findOne wont fire unless data is sent back
             console.log('passport strategy local-signup: ', req.body);
-            process.nextTick(function() { // Waits until all previous code has completed then runs callback function. This is a node function.
+            process.nextTick(function() { // Waits until all previous code has completed then runs callback function.
             User.findOne({$or: [
                 { 'email': email },
                 { 'name': req.fields.name }

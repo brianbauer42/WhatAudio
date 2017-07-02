@@ -22,7 +22,13 @@ app.use(express.static(__dirname + '/public'));
 
 // ---------------- API ROUTES ----------------
 // These are authentication related routes for creation and authentication of accounts.
-app.post('/api/user/register', formidable(), passport.authenticate('local-signup'), userCtrl.login);
+app.post('/api/user/register', function(req, res, next){
+    console.log(req.body, req.fields, req.user);
+    next();
+  }, passport.authenticate('local-signup'), function(req, res, next){
+    console.log(req.body, req.fields, req.user);
+    next();
+  }, userCtrl.login);
 app.post('/api/user/login', passport.authenticate('local-login'), userCtrl.login);
 app.get('/api/user/logout', function(req, res){
   req.logout();         // Method 'req.logout' is added by passport middleware. It clears req.user and any stored session data.
