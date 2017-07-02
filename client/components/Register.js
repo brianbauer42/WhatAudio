@@ -56,7 +56,7 @@ class Register extends Component {
                 method: "POST",
                 body: regFormData
             });
-            this.clearAllFields();
+            //this.clearAllFields();
         }
     }
 
