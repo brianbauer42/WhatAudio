@@ -189,6 +189,11 @@ input {
   height: 500px;
 }
 
+.adminPage,
+.playlistPage {
+  flex-direction: column;
+}
+
 .playlistContainer,
 .loginContainer,
 .contactContainer,
@@ -206,4 +211,25 @@ input {
 .registrationContainer > form > div > input {
   padding: 2px;
   margin-bottom: 6px;
+}
+
+.adminPage {
+  margin-top: 40px;
+  height: 100%;
+}
+
+.adminContainer {
+  margin: 20px;
+}
+
+.adminContainer,
+.loginContainer,
+.registrationContainer {
+  border: 4px solid black;
+  border-radius: 8px;
+  padding: 15px;
+}
+
+h2 {
+  margin-top: 0;
 }

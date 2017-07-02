@@ -30,14 +30,11 @@ module.exports = function(passport) { // Call in passport as a parameter
             console.log('passport strategy local-signup: ', req.body);
             process.nextTick(function() { // Waits until all previous code has completed then runs callback function. This is a node function.
             User.findOne({'email': email}, function(err, user) { // Find-by-email mongoose function returns an error or a user object
-                console.log('alpha');
                 if (err) return done(err);
-                console.log('beta');                       // If there is an error return the error
                 if (user) {                                      // If there is a valid user, verify password is correct
                     console.log('User already exists')             // Username or email has already been taken
                     return done(null, false);
                 } else {                                               // No user found, make a new user
-                    console.log('charlie');
                     var newUser = new User(req.body);                  // Create our new user object to insert into the database
                     newUser.email    = email;                          // User's email
                     newUser.password = newUser.generateHash(password); // Save password in hashed form (plaintext isn't secure, obviously!)

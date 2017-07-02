@@ -11,25 +11,25 @@ class Login extends Component {
             }
         }
 
-        this.handlePasswordChange = this.handlePasswordChange.bind(this);
-        this.handleEmailChange = this.handleEmailChange.bind(this);
+        this.clearAllFields = this.handleInputChange.bind(this);
+        this.handleInputChange = this.handleInputChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
-    handleEmailChange(e) {
+    handleInputChange(field, e) {
         const newStateUser = this.state.user;
-        newStateUser.email = e.target.value;
+        newStateUser[field] = e.target.value;
         this.setState({user: newStateUser});
     }
 
-    handlePasswordChange(e) {
-        const newStateUser = this.state.user;
-        newStateUser.password = e.target.value;
-        this.setState({user: newStateUser});
+    clearAllFields() {
+        this.handleInputChange('email', {target: {value: ''}});
+        this.handleInputChange('password', {target: {value: ''}});
     }
 
     handleSubmit(e) {
         console.log('A user attempted to login: ', this.state.user);
+        this.clearAllFields();
         e.preventDefault();
     }
 
@@ -45,7 +45,7 @@ class Login extends Component {
                         <div >
                             <input type='email'
                                 value={this.state.user.email}
-                                onChange={this.handleEmailChange}
+                                onChange={(e) => this.handleInputChange('email', e)}
                                 placeholder="email@address.com"
                             />
                         </div>
@@ -55,7 +55,7 @@ class Login extends Component {
                         <div >
                             <input type='password'
                                 value={this.state.user.password}
-                                onChange={this.handlePasswordChange}
+                                onChange={(e) => this.handleInputChange('password', e)}
                             />
                         </div>
                         <button type='submit'>Login</button>

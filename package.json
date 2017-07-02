@@ -17,10 +17,8 @@
     "react": "^15.6.1",
     "react-bootstrap": "^0.31.0",
     "react-dom": "^15.6.1",
-    "react-redux": "^5.0.5",
     "react-router": "^4.1.1",
     "react-router-dom": "^4.1.1",
-    "redux": "^3.7.1",
     "soundmanager2": "^2.97.20170602"
   },
   "devDependencies": {
@@ -32,17 +30,17 @@
     "babel-preset-react": "^6.5.0",
     "babel-preset-react-hmre": "^1.1.1",
     "babel-preset-stage-0": "^6.5.0",
-    "chokidar": "^1.2.0",
+    "chokidar": "^1.7.0",
     "css-loader": "^0.23.1",
     "eslint": "^2.5.3",
     "eslint-config-airbnb": "^6.2.0",
     "eslint-plugin-react": "^4.2.3",
     "node-sass": "^3.4.2",
-    "rimraf": "^2.4.3",
+    "rimraf": "^2.6.1",
     "style-loader": "^0.13.1",
     "webpack": "^3.0.0",
-    "webpack-dev-middleware": "^1.9.0",
-    "webpack-hot-middleware": "^2.13.2"
+    "webpack-dev-middleware": "^1.11.0",
+    "webpack-hot-middleware": "^2.18.0"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",

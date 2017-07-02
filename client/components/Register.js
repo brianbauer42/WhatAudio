@@ -14,40 +14,50 @@ class Register extends Component {
             }
         }
 
-        this.handleVerifyChange = this.handleVerifyChange.bind(this);
-        this.handlePasswordChange = this.handlePasswordChange.bind(this);
-        this.handleEmailChange = this.handleEmailChange.bind(this);
-        this.handleNameChange = this.handleNameChange.bind(this);
+        this.clearAllFields = this.clearAllFields.bind(this);
+        this.clearPasswordFields = this.clearPasswordFields.bind(this);
+        this.handleInputChange = this.handleInputChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
-    handleNameChange(e) {
+    handleInputChange(field, e) {
         const newStateUser = this.state.user;
-        newStateUser.name = e.target.value;
+        newStateUser[field] = e.target.value;
         this.setState({user: newStateUser});
     }
 
-    handleEmailChange(e) {
-        const newStateUser = this.state.user;
-        newStateUser.email = e.target.value;
-        this.setState({user: newStateUser});
+    clearPasswordFields() {
+        this.handleInputChange('password', {target: {value: ''}});
+        this.handleInputChange('verify', {target: {value: ''}});
     }
 
-    handlePasswordChange(e) {
-        const newStateUser = this.state.user;
-        newStateUser.password = e.target.value;
-        this.setState({user: newStateUser});
-    }
-
-    handleVerifyChange(e) {
-        const newStateUser = this.state.user;
-        newStateUser.verify = e.target.value;
-        this.setState({user: newStateUser});
+    clearAllFields() {
+        this.handleInputChange('name', {target: {value: ''}});
+        this.handleInputChange('email', {target: {value: ''}});
+        this.clearPasswordFields();
     }
 
     handleSubmit(e) {
-        console.log('A user attempted to register: ', this.state.user);
         e.preventDefault();
+        var self = this;
+        if (this.state.user.password !== this.state.user.verify) {
+            this.setState({errors: "Password didn't match!"});
+            this.clearPasswordFields();
+        } else {
+            // Not working weith new FormData ... Don't see why...
+            // var regFormElement = document.querySelector('#registrationForm');
+            var userInput = Object.entries(this.state.user);
+            var regFormData = new FormData();
+            for (var [key, value] of userInput) {
+                regFormData.append(key, value);
+                console.log(key, value);
+            }
+            fetch("/api/user/register", {
+                method: "POST",
+                body: regFormData
+            });
+            this.clearAllFields();
+        }
     }
 
     render(){
@@ -55,14 +65,14 @@ class Register extends Component {
             <div className="registrationPage">
                 <div className="registrationContainer">
                     <h2>Register</h2>
-                    <form onSubmit={this.handleSubmit}>
+                    <form id="registrationForm" className="registrationForm" onSubmit={this.handleSubmit}>
                         <div >
                             <label>Name</label>
                         </div>
                         <div >
                             <input type='text' 
                                 value={this.state.user.name}
-                                onChange={this.handleNameChange}
+                                onChange={(e) => this.handleInputChange('name', e)}
                                 placeholder="Your name"
                             />
                         </div>
@@ -72,7 +82,7 @@ class Register extends Component {
                         <div >
                             <input type='email'
                                 value={this.state.user.email}
-                                onChange={this.handleEmailChange}
+                                onChange={(e) => this.handleInputChange('email', e)}
                                 placeholder="email@address.com"
                             />
                         </div>
@@ -82,7 +92,8 @@ class Register extends Component {
                         <div >
                             <input type='password'
                                 value={this.state.user.password}
-                                onChange={this.handlePasswordChange}
+                                onChange={(e) => this.handleInputChange('password', e)}
+                                ref={regPassword => this.regPasswordInput = regPassword}
                             />
                         </div>
                         <div >
@@ -91,7 +102,8 @@ class Register extends Component {
                         <div >
                             <input type='password'
                                 value={this.state.user.verify}
-                                onChange={this.handleVerifyChange}
+                                onChange={(e) => this.handleInputChange('verify', e)}
+                                ref="verify"
                             />
                         </div>
                         <button type='submit'>Submit</button>

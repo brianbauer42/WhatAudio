@@ -10,15 +10,16 @@ module.exports = {
     contactPageEmail: "",
     productionPort: 80,
     devPort: 8080,
-    formidableConfig: {
-        keepExtensions: true,
-        multiples: true,
-        uploadDir: "./tmp"
-    },
-    allowRegistrations: false,
+    requireInviteCode: false,
+    disableRegistration: false,
     outgoingEmail: {
         smtpServer: "",
         login: "",
         password: ""
+    },
+    formidableConfig: {
+        keepExtensions: true,
+        multiples: true,
+        uploadDir: "./tmp"
     }
 }

@@ -9,6 +9,15 @@ In **config.js**:
 The **sessionSecret** variable must contain a random string within quotes.  
 Set the **mongoUri** variable to point to your instance of mongodb.
 
-In **package.json**, where it says 'development' in **scripts.build:webpack**, change '**development**' to '**production**'
+In **package.json**, in **scripts.build:webpack**:  
+change '**development**' to '**production**'  
+change webpack.config.**dev**.j* to webpack.config.**prod**.js
 
 Navigate to the download location in your terminal and type **npm run go**
+
+If the server is in production mode and no running on port 80, verify that the NODE_ENV environment
+variable is set to 'production' by setting it manually in your terminal.  
+```
+Linux/OSX: export NODE_ENV=production
+Windows: set NODE_ENV=production
+```

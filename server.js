@@ -13,20 +13,16 @@ const app = express();
 require('./server/passport/passport')(passport);
 
 app.use(session(config.sessionSecret));
-/*app.use(session({ secret: config.secret , cookie: { maxAge: 60000 }, resave: true, saveUninitialized: true }));*/
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
 app.use(express.static(__dirname + '/public'));
-app.use('/static', express.static(__dirname + '/static'));
-//app.set('view engine', 'jsx');
-//app.engine('jsx', require('express-react-views').createEngine());
 
 // ---------------- API ROUTES ----------------
 // These are authentication related routes for creation and authentication of accounts.
-app.post('/api/user/register', passport.authenticate('local-signup'), userCtrl.login);
+app.post('/api/user/register', formidable(), passport.authenticate('local-signup'), userCtrl.login);
 app.post('/api/user/login', passport.authenticate('local-login'), userCtrl.login);
 app.get('/api/user/logout', function(req, res){
   req.logout();         // Method 'req.logout' is added by passport middleware. It clears req.user and any stored session data.
@@ -47,9 +43,16 @@ app.get('/api/songs', postCtrl.getAll)
 app.put('/api/songs:id', auth.ifIsContentOriginator, postCtrl.update)
 app.delete('/api/songs:id', auth.ifIsContentOriginator, postCtrl.delete)
 
+// Return contact email from config. Just because I need practice.
+app.get('/api/contactemail', function(req, res) {
+  res.setHeader('Content-Type', 'application/json');
+  res.send(JSON.stringify(config.contactPageEmail));
+})
+
+// --------- HOT RELOAD STUFF FOR DEV MODE -------
 if (process.env.NODE_ENV === 'production') {
   console.log('Running in production mode');
-  app.use('/static', express.static('static'));
+  app.use('/static', express.static(__dirname + '/static'));
 } else {
   // When not in production, enable hot reloading
   var chokidar = require('chokidar');
