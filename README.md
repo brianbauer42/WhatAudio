@@ -3,6 +3,8 @@ UNDER CONSTRUCTION
 I've long admired the format of leftasrain.com and wanted to build something similar. I'm finally setting out to do that.
 
 ## Setup Instructions:
+Make sure to **npm install** the dependencies from within the program's directory.
+
 Rename **config_example.js** to **config.js**
 
 In **config.js**:  
