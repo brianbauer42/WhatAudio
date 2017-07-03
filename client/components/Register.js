@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import request from 'superagent';
+import axios from 'axios'
 
 class Register extends Component {
     constructor(props) {
@@ -47,20 +47,27 @@ class Register extends Component {
         } else {
             // Not working weith new FormData ... Don't see why...
             // var regFormElement = document.querySelector('#registrationForm');
-            var userInput = Object.entries(this.state.user);
-            var regFormData = new FormData();
-            for (var [key, value] of userInput) {
-                regFormData.append(key, value);
-                console.log(key, value);
-            }
-            fetch("/api/user/register", {
-                method: 'POST',
-                body: regFormData,
-                credentials: 'include'
+
+            // var userInput = Object.entries(this.state.user);
+            // var regFormData = new FormData();
+            // for (var [key, value] of userInput) {
+            //     regFormData.append(key, value);
+            //     console.log(key, value);
+            // }
+            axios.post("/api/user/register", {
+                signup: this.state.user
             }).then(function(result) {
                 console.log(result);
             })
-            this.clearAllFields();
+            // fetch("/api/user/register", {
+            //     method: 'POST',
+            //     body: regFormData,
+            //     credentials: 'include'
+        // })
+            .then(function(result) {
+                console.log(result);
+            })
+            // this.clearAllFields();
         }
     }
 

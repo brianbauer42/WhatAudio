@@ -22,8 +22,8 @@ app.use(express.static(__dirname + '/public'));
 
 // ---------------- API ROUTES ----------------
 // These are authentication related routes for creation and authentication of accounts.
-app.post('/api/user/register', function(req, res, next){
-    console.log(req.body, req.fields, req.user);
+app.post('/api/user/register',  function(req, res, next){
+    console.log(req.body, req.fields, req.user, req.signup);
     next();
   }, passport.authenticate('local-signup'), function(req, res, next){
     console.log(req.body, req.fields, req.user);

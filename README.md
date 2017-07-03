@@ -11,7 +11,7 @@ Set the **mongoUri** variable to point to your instance of mongodb.
 
 In **package.json**, in **scripts.build:webpack**:  
 change '**development**' to '**production**'  
-change webpack.config.**dev**.j* to webpack.config.**prod**.js
+change webpack.config.**dev**.js to webpack.config.**prod**.js
 
 Navigate to the download location in your terminal and type **npm run go**
 
