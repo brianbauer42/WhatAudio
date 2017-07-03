@@ -14,6 +14,46 @@ module.exports = function(passport) {
         });
     });
 
+
+    passport.use('temp-local-signup', new LocalStrategy({
+            usernameField : 'signup[email]',
+            passwordField : 'signup[password]',
+            passReqToCallback : true
+        },
+        function(req, email, password, done) {
+            process.nextTick(function() {
+                console.log('passport strategy local-signup: req.body.signup:', req.body.signup );
+                var newUser = new User();
+                newUser.email    = email;
+                newUser.name     = req.body.signup.name;
+                newUser.password = newUser.generateHash(password);
+                console.log("new user being created!", newUser);
+                newUser.save(function(err) {
+                    if (err) throw err;
+                    console.log('Created new user', newUser);
+                    return done(null, newUser);
+                });
+
+            // User.findOne({$or: [
+            //     { 'email': email },
+            //     { 'name': req.body.signup.name }
+            //     ]}, function(err, user) {
+            //     console.log("FORTY TWO SV");
+            //     if (err) return done(err);
+            //     if (user && (user.name === req.body.signup.name)) {
+            //         return done(null, false, { message: 'User name already taken.' });
+            //     } else if (user && (user.email === email)) {
+            //         return done(null, false, { message: 'An account with the email address already exists' });
+            //     } else if (req.body.signup.password !== req.body.signup.verify) {
+            //         return (done(null, false, { message: "The passwords don't match!"}));
+            //     } else {
+
+            //     }
+            // });
+        });
+    }));
+
+
     passport.use('local-signup', new LocalStrategy({
             usernameField : 'signup[email]',
             passwordField : 'signup[password]',

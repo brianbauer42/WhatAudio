@@ -22,13 +22,7 @@ app.use(express.static(__dirname + '/public'));
 
 // ---------------- API ROUTES ----------------
 // These are authentication related routes for creation and authentication of accounts.
-app.post('/api/user/register',  function(req, res, next){
-    console.log(req.body, req.fields, req.user, req.signup);
-    next();
-  }, passport.authenticate('local-signup'), function(req, res, next){
-    console.log(req.body, req.fields, req.user);
-    next();
-  }, userCtrl.login);
+app.post('/api/user/register', passport.authenticate('local-signup'), userCtrl.login);
 app.post('/api/user/login', passport.authenticate('local-login'), userCtrl.login);
 app.get('/api/user/logout', function(req, res){
   req.logout();         // Method 'req.logout' is added by passport middleware. It clears req.user and any stored session data.
@@ -89,6 +83,15 @@ mongoose.connect(config.mongoUri, { useMongoClient: true });
 mongoose.connection.on('error', console.error.bind(console, 'Connection error!'));
 mongoose.connection.once('open', function(){
   console.log("MongoDB connected successfully");
+  mongoose.connection.db.listCollections({name: 'User'})
+    .next(function(err, collinfo) {
+        if (collinfo) {
+            console.log(collinfo);
+        }
+        else {
+          console.log (err);
+        }
+    });
 });
 
 // Render the index (referring to root of views specified in middleware section (__dirname + '/public'))

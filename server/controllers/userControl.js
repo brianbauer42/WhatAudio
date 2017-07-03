@@ -3,7 +3,6 @@ const User = require('./../models/User.js');
 module.exports = {
   // Passport does most of this. We just have to send back the response.
   login: function(req, res, next){
-      console.log(req.fields);
       console.log('userCtrl.login function was called');
       console.log(req.user);
       res.send();
