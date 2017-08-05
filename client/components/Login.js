@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import axios from 'axios';
 
 class Login extends Component {
     constructor(props) {
@@ -28,9 +29,14 @@ class Login extends Component {
     }
 
     handleSubmit(e) {
-        console.log('A user attempted to login: ', this.state.user);
-        this.clearAllFields();
         e.preventDefault();
+        console.log('A user attempted to login: ', this.state.user);
+        axios.post("/api/user/login", {
+            login: this.state.user
+        }).then(function(result) {
+            console.log(result);
+        })
+        //this.clearAllFields();
     }
 
     render(){

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import axios from 'axios'
+import axios from 'axios';
 
 class Register extends Component {
     constructor(props) {
@@ -64,9 +64,9 @@ class Register extends Component {
             //     body: regFormData,
             //     credentials: 'include'
         // })
-            .then(function(result) {
-                console.log(result);
-            })
+            // .then(function(result) {
+            //     console.log(result);
+            // })
             // this.clearAllFields();
         }
     }

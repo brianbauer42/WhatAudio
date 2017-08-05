@@ -12,12 +12,16 @@ const config = require('./config.js');
 const app = express();
 require('./server/passport/passport')(passport);
 
-app.use(session(config.sessionSecret));
+app.use(session({
+  secret: config.sessionSecret,
+  saveUninitialized: true,
+  resave: true
+}));
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(cors());
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(__dirname + '/public'));
 
 // ---------------- API ROUTES ----------------
@@ -83,15 +87,6 @@ mongoose.connect(config.mongoUri, { useMongoClient: true });
 mongoose.connection.on('error', console.error.bind(console, 'Connection error!'));
 mongoose.connection.once('open', function(){
   console.log("MongoDB connected successfully");
-  mongoose.connection.db.listCollections({name: 'User'})
-    .next(function(err, collinfo) {
-        if (collinfo) {
-            console.log(collinfo);
-        }
-        else {
-          console.log (err);
-        }
-    });
 });
 
 // Render the index (referring to root of views specified in middleware section (__dirname + '/public'))
