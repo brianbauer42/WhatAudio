@@ -37,7 +37,7 @@ module.exports = function(passport) {
                     newUser.password    = newUser.generateHash(password);
                     newUser.save(function(err) {
                         if (err) console.log(err);
-                        return done(null, newUser, { message: "Welcome, " + user.displayName + "!" });
+                        return done(null, newUser, { message: "Welcome, " + newUser.displayName + "!" });
                     });
                 }
             });
