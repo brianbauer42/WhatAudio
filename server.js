@@ -40,16 +40,24 @@ app.get('/api/user/logout', function(req, res){
 // These routes are for modifying or retrieving info about the users in the database.
 // There is no create because passport handles all user creation in passport/passport.js
 app.get('/api/user/whoami', userCtrl.whoAmI);
-app.get('/api/user', auth.ifIsAdmin, userCtrl.getAll);
+app.get('/api/user', auth.requireLogin, userCtrl.getAll);
 app.get('/api/user/:id', userCtrl.read);
-app.put('/api/user/:id', auth.ifIsAuthorized, userCtrl.update);
-app.delete('/api/user/:id', auth.ifIsAuthorized, userCtrl.delete);
+app.put('/api/user/:id', auth.requireLogin, userCtrl.update);
+app.delete('/api/user/:id', auth.requireLogin, userCtrl.delete);
 
 // Routes for posting and reading entries
-app.post('/api/songs', auth.ifIsAuthenticated, postCtrl.create);
+app.post('/api/songs/upload', formidable({
+  encoding: 'utf-8',
+  uploadDir: './uploads',
+  multiples: true // req.files to be arrays of files 
+}), function(req, res, next) {
+  console.log(req.fields, req.files);
+});
+//auth.requireLogin, postCtrl.create);
+
 app.get('/api/songs', postCtrl.getAll)
-app.put('/api/songs:id', auth.ifIsContentOriginator, postCtrl.update)
-app.delete('/api/songs:id', auth.ifIsContentOriginator, postCtrl.delete)
+app.put('/api/songs:id', auth.requireLogin, postCtrl.update)
+app.delete('/api/songs:id', auth.requireLogin, postCtrl.delete)
 
 // Return contact email from config. Just because I need practice.
 app.get('/api/contactemail', function(req, res) {

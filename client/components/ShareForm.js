@@ -21,9 +21,9 @@ class ShareForm extends Component {
     }
 
     handleInputChange(field, e) {
-        const newStateUser = this.state.user;
-        newStateUser[field] = e.target.value;
-        this.setState({user: newStateUser});
+        const newStatePost = this.state.post;
+        newStatePost[field] = e.target.value;
+        this.setState({post: newStatePost});
     }
 
     handleFileChange(field, e) {
@@ -41,10 +41,10 @@ class ShareForm extends Component {
         for (var [key, value] of formData.entries()) { 
             console.log(key, value);
         }
-        // fetch("/api/songs", {
-        //     method: "POST",
-        //     body: formData
-        // })
+        fetch("/api/songs/upload", {
+            method: "POST",
+            body: formData
+        })
         e.preventDefault();
     }
 
