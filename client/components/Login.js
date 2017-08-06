@@ -16,7 +16,8 @@ class Login extends Component {
         this.clearAllFields = this.handleInputChange.bind(this);
         this.handleInputChange = this.handleInputChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
-        this.handleLoginResponse = this.handleLoginResponse.bind(this);
+        this.handleLoginSuccess = this.handleLoginSuccess.bind(this);
+        this.handleLoginFailure = this.handleLoginFailure.bind(this);
     }
 
     handleInputChange(field, e) {
@@ -33,6 +34,7 @@ class Login extends Component {
     handleLoginSuccess(result) { 
         console.log("login success:", result.data.message);
         this.props.saveLoggedInUser(result.data.user);
+        this.setState({message: result.data.message});
         this.props.history.push('/admin');
     }
 
@@ -81,6 +83,7 @@ class Login extends Component {
                         </div>
                         <button type='submit'>Login</button>
                     </form>
+                    {this.state.message ? <p className="successMessage">{this.state.message}</p> : null}
                 </div>
             </div>
         )

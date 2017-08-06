@@ -5,6 +5,7 @@ const mongoose = require('mongoose');
 const passport = require('passport');
 const session = require('express-session');
 const formidable = require('express-formidable');
+const flash = require('connect-flash');
 const userCtrl = require('./server/controllers/userControl');
 const postCtrl = require('./server/controllers/postControl');
 const auth = require('./server/passport/auth');
@@ -17,6 +18,7 @@ app.use(session({
   saveUninitialized: true,
   resave: true
 }));
+app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(cors());
@@ -24,13 +26,15 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(__dirname + '/public'));
 
+
+
 // ---------------- API ROUTES ----------------
 // These are authentication related routes for creation and authentication of accounts.
-app.post('/api/user/register', passport.authenticate('local-signup'), userCtrl.login);
-app.post('/api/user/login', passport.authenticate('local-login'), userCtrl.login);
+app.post('/api/user/register', passport.authenticate('local-signup', { failureFlash: true }), userCtrl.login);
+app.post('/api/user/login', passport.authenticate('local-login', { failureFlash: true }), userCtrl.login);
 app.get('/api/user/logout', function(req, res){
-  req.logout();         // Method 'req.logout' is added by passport middleware. It clears req.user and any stored session data.
-  res.redirect('/');    // Send user back to home page after logging out.
+  req.logout();
+  res.redirect('/');
 });
 
 // These routes are for modifying or retrieving info about the users in the database.

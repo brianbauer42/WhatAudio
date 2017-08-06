@@ -57,7 +57,7 @@ class Main extends Component {
             <Route exact path='/' component={Playlist}/>
             <Route path='/admin' component={AdminPanel} />
             <Route path='/contact' component={Contact}/>
-            <Route path='/login' component={Login} saveLoggedInUser={this.state.saveLoggedInUser} />
+            <Route path='/login' render={(props) => <Login {...props} saveLoggedInUser={this.saveLoggedInUser}/>}/>
             <Route path='/register' component={Register}/>
           </Switch>
         </div>

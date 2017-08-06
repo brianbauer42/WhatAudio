@@ -3,12 +3,10 @@ const User = require('./../models/User.js');
 
 module.exports = function(passport) {
     passport.serializeUser(function(user, done) {
-        console.log("USER", user);
         done(null, user.id);
     });
 
     passport.deserializeUser(function(id, done) {
-        console.log("ID", id);
         User.findById(id, function(err, user) {
             done(err, user);
         });
@@ -21,7 +19,6 @@ module.exports = function(passport) {
         },
         function(req, email, password, done) {
             process.nextTick(function() {
-            console.log('passport strategy local-signup: req.body.signup:', req.body.signup );
             User.findOne({$or: [
                 { 'email': email },
                 { 'name': req.body.signup.name }
@@ -38,11 +35,9 @@ module.exports = function(passport) {
                     newUser.email       = email;
                     newUser.displayName = req.body.signup.name;
                     newUser.password    = newUser.generateHash(password);
-                    console.log("New user being created!");
                     newUser.save(function(err) {
                         if (err) console.log(err);
-                        else console.log('Saved new user successfully!');
-                        return done(null, newUser);
+                        return done(null, newUser, { message: "Welcome, " + user.displayName + "!" });
                     });
                 }
             });
