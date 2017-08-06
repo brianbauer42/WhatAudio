@@ -1,11 +1,18 @@
 const User = require('./../models/User.js');
+const passport = require('passport');
 
 module.exports = {
   // Passport does most of this. We just have to send back the response.
   login: function(req, res, next){
-      console.log('userCtrl.login function was called');
-      console.log(req.user);
-      res.send();
+      console.log("Login Response:", res.req.authInfo.message);
+      response = {};
+      response.message = res.req.authInfo.message;
+      if (res.req.user) {
+        response.user = {};
+        response.user.displayName = res.req.user.displayName;
+        response.user._id = res.req.user._id;
+      }
+      res.send(response);
   },
 
   // Find current user, then check that a user is logged in.

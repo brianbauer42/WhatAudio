@@ -9,12 +9,14 @@ class Login extends Component {
             user: {
                 email: '',
                 password: ''
-            }
+            },
+            message: ''
         }
 
         this.clearAllFields = this.handleInputChange.bind(this);
         this.handleInputChange = this.handleInputChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleLoginResponse = this.handleLoginResponse.bind(this);
     }
 
     handleInputChange(field, e) {
@@ -28,15 +30,28 @@ class Login extends Component {
         this.handleInputChange('password', {target: {value: ''}});
     }
 
+    handleLoginSuccess(result) { 
+        console.log("login success:", result.data.message);
+        this.props.saveLoggedInUser(result.data.user);
+        this.props.history.push('/admin');
+    }
+
+    handleLoginFailure(result) {
+        console.log("result", result);
+        if (result && result.data && result.data.message) {
+        console.log("login failed:", result.data.message);
+        } else {
+            console.log("unknown login failure");
+        }
+        this.clearAllFields();
+    }
+
     handleSubmit(e) {
         e.preventDefault();
         console.log('A user attempted to login: ', this.state.user);
         axios.post("/api/user/login", {
             login: this.state.user
-        }).then(function(result) {
-            console.log(result);
-        })
-        //this.clearAllFields();
+        }).then( (result) => this.handleLoginSuccess(result), (result) => this.handleLoginFailure(result));
     }
 
     render(){

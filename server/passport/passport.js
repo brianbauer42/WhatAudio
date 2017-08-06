@@ -59,7 +59,7 @@ module.exports = function(passport) {
                 User.findOne({'email': email}, function(err, user) {
                     if (err) return done(err);
                     if (user && user.validPassword(password)) {
-                        return done(null, user, { message: 'Welcom back, ' + user.name + '!' });
+                        return done(null, user, { message: 'Welcome back, ' + user.displayName + '!' });
                     } else if (user) {
                         return done(null, false, { message: 'Invalid password.' });
                     } else {
