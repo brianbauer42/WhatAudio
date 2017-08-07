@@ -10,6 +10,7 @@ const userCtrl = require('./server/controllers/userControl');
 const postCtrl = require('./server/controllers/postControl');
 const auth = require('./server/passport/auth');
 const config = require('./config.js');
+const startup = require('./server/startup.js');
 const app = express();
 require('./server/passport/passport')(passport);
 
@@ -26,7 +27,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(__dirname + '/public'));
 
-
+startup.setup();
 
 // ---------------- API ROUTES ----------------
 // These are authentication related routes for creation and authentication of accounts.
@@ -46,11 +47,7 @@ app.put('/api/user/:id', auth.requireLogin, userCtrl.update);
 app.delete('/api/user/:id', auth.requireLogin, userCtrl.delete);
 
 // Routes for posting and reading entries
-app.post('/api/songs/upload', formidable({
-  encoding: 'utf-8',
-  uploadDir: './uploads',
-  multiples: true // req.files to be arrays of files 
-}), function(req, res, next) {
+app.post('/api/songs/upload', formidable(config.formidableConfig), function(req, res, next) {
   console.log(req.fields, req.files);
 });
 //auth.requireLogin, postCtrl.create);

@@ -1,25 +1,25 @@
 // Setup Instructions:
-// Copy this file to the server folder and rename it to config.js
-// Fill in the sessionSecret and mongoUri values.
+// Rename this file (or a copy of it) to config.js
+// Fill in the sessionSecret and mongoUri valuues before starting your server.
 
 module.exports = {
-    sessionSecret: {
-        secret: ""
-    },
+    sessionSecret: "",
     mongoUri: "",
-    contactPageEmail: "",
     productionPort: 80,
     devPort: 8080,
-    requireInviteCode: false,
-    disableRegistration: false,
-    outgoingEmail: {
-        smtpServer: "",
-        login: "",
-        password: ""
-    },
+    contactPageEmail: "",
     formidableConfig: {
+        encoding: 'utf-8',
         keepExtensions: true,
         multiples: true,
-        uploadDir: "./tmp"
+        uploadDir: __dirname + "/uploads"
+    },
+    infiniteConfig: {
+        allowRegistrations: false,
+        email: {
+            smtpServer: "",
+            login: "",
+            password: ""
+        }
     }
 }
