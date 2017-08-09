@@ -47,9 +47,7 @@ app.put('/api/user/:id', auth.requireLogin, userCtrl.update);
 app.delete('/api/user/:id', auth.requireLogin, userCtrl.delete);
 
 // Routes for posting and reading entries
-app.post('/api/songs/upload', formidable(config.formidableConfig), function(req, res, next) {
-  console.log(req.fields, req.files);
-});
+app.post('/api/songs/upload', formidable(config.formidableConfig), postCtrl.create);
 //auth.requireLogin, postCtrl.create);
 
 app.get('/api/songs', postCtrl.getAll)

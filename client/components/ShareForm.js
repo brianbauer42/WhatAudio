@@ -33,16 +33,11 @@ class ShareForm extends Component {
     }
 
     handleSubmit(e) {
-        console.log(e);
-        console.log('A user submitted a new post: ', this.state.post);
         var formElement = document.querySelector('#newPostForm');
-        console.log(formElement);
         var formData = new FormData(formElement);
-        for (var [key, value] of formData.entries()) { 
-            console.log(key, value);
-        }
         fetch("/api/songs/upload", {
             method: "POST",
+            credentials: 'include',
             body: formData
         })
         e.preventDefault();

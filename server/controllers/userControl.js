@@ -3,7 +3,7 @@ const passport = require('passport');
 
 module.exports = {
   // Passport does most of this. We just have to send back the response.
-  login: function(req, res, next){
+  login: function(req, res, next) {
       console.log("Login Response:", res.req.authInfo.message);
       response = {};
       response.message = res.req.authInfo.message;
