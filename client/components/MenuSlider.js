@@ -7,8 +7,8 @@ class MenuSlider extends Component {
   }
 
   handleLogout(e) {
-    this.props.toggleMenu();
     this.props.handleLogout();
+    this.props.toggleMenu();
   }
 
   render() {

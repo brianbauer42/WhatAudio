@@ -26,11 +26,12 @@ module.exports = {
   },
 
   getAll: function(req, res) {
-    Post.find(req.query).exec(function (err, result) {
+    Post.find({}).populate('sharedBy', 'displayName').exec(function (err, result) {
       if (err) {
         res.send(err);
       }
       res.send(result);
+      console.log("result", result);
     });
   },
 

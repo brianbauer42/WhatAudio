@@ -32,6 +32,11 @@ class ShareForm extends Component {
         this.setState({post: newStatePost});
     }
 
+    clearAllFields() {
+        this.handleInputChange('email', {e: {target: {value: ''}}});
+        this.handleInputChange('password', {e: {target: {value: ''}}});
+    }
+
     handleSubmit(e) {
         var formElement = document.querySelector('#newPostForm');
         var formData = new FormData(formElement);
@@ -39,7 +44,10 @@ class ShareForm extends Component {
             method: "POST",
             credentials: 'include',
             body: formData
-        })
+        }).then(() => function() {
+            this.clearAllFields();
+            this.props.history.push('/');
+        });
         e.preventDefault();
     }
 

@@ -21,14 +21,15 @@ class Login extends Component {
     }
 
     handleInputChange(field, e) {
+        console.log(field, e);
         const newStateUser = this.state.user;
         newStateUser[field] = e.target.value;
         this.setState({user: newStateUser});
     }
 
     clearAllFields() {
-        this.handleInputChange('email', {target: {value: ''}});
-        this.handleInputChange('password', {target: {value: ''}});
+        this.handleInputChange('email', {e: {target: {value: ''}}});
+        this.handleInputChange('password', {e: {target: {value: ''}}});
     }
 
     handleLoginSuccess(result) { 

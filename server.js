@@ -26,6 +26,7 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(__dirname + '/public'));
+app.use('/resources', express.static(config.formidableConfig.uploadDir));
 
 startup.setup();
 
@@ -47,9 +48,7 @@ app.put('/api/user/:id', auth.requireLogin, userCtrl.update);
 app.delete('/api/user/:id', auth.requireLogin, userCtrl.delete);
 
 // Routes for posting and reading entries
-app.post('/api/songs/upload', formidable(config.formidableConfig), postCtrl.create);
-//auth.requireLogin, postCtrl.create);
-
+app.post('/api/songs/upload', auth.requireLogin, formidable(config.formidableConfig), postCtrl.create);
 app.get('/api/songs', postCtrl.getAll)
 app.put('/api/songs:id', auth.requireLogin, postCtrl.update)
 app.delete('/api/songs:id', auth.requireLogin, postCtrl.delete)

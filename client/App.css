@@ -136,6 +136,9 @@ input {
   margin: 10px;
   height: 220px;
 }
+.trackCard:hover {
+  border: 5px solid darkslategray;
+}
 
 .audioControls {
   display: inline;
@@ -178,7 +181,14 @@ input {
   width: 80vw;
 }
 
-.playlistPage,
+.playlistPage {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin-top: 20px;
+}
+
 .loginPage,
 .contactPage,
 .adminPage,
@@ -232,4 +242,29 @@ input {
 
 h2 {
   margin-top: 0;
+}
+
+.currentTrack {
+  animation: activePulse 6s infinite;
+}
+
+@keyframes activePulse {
+  0% {
+    border: 5px solid black;
+  }
+  4% {
+    border: 5px solid darkslategray;
+  }
+  35% {
+    border: 5px solid #FF5555;
+  }
+  65% {
+    border: 5px solid #FF5555;
+  }
+  96% {
+    border: 5px solid darkslategray;
+  }
+  100% {
+    border: 5px solid black;
+  }
 }
