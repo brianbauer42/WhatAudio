@@ -131,13 +131,19 @@ input {
 
 .trackCard {
   display: flex;
-  border: 3px solid black;
-  border-radius: 8px;
+  border: 5px solid transparent;
+  border-image: linear-gradient(to left, darkslategray 80%, #FF5555) 10;
   margin: 10px;
   height: 220px;
 }
+
 .trackCard:hover {
-  border: 5px solid darkslategray;
+  display: flex;
+  border: 5px solid transparent;
+  border-image: linear-gradient(to left, darkslategray 30%, #FF5555) 10;
+  margin: 10px;
+  height: 220px;
+
 }
 
 .audioControls {
@@ -185,7 +191,7 @@ input {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  height: 100%;
   margin-top: 20px;
 }
 

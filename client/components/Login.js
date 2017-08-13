@@ -51,7 +51,6 @@ class Login extends Component {
 
     handleSubmit(e) {
         e.preventDefault();
-        console.log('A user attempted to login: ', this.state.user);
         axios.post("/api/user/login", {
             login: this.state.user
         }).then( (result) => this.handleLoginSuccess(result), (result) => this.handleLoginFailure(result));

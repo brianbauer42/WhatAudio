@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Switch, Route } from 'react-router-dom'
+import { Switch, Route } from 'react-router-dom';
+import soundManager from 'soundmanager2';
 import axios from 'axios';
 import Header from './Header.js';
 import MenuSlider from './MenuSlider.js';
@@ -17,7 +18,8 @@ class Main extends Component {
       showMenu: false,
       loggedInUser: null,
       posts: null,
-      currentTrack: null
+      currentTrack: null,
+      smReady: false
     };
 
     this.toggleMenu = this.toggleMenu.bind(this);
@@ -25,9 +27,18 @@ class Main extends Component {
     this.updateLoggedInUser = this.updateLoggedInUser.bind(this);
     this.getPosts = this.getPosts.bind(this);
   }
-  
-  componentDidMount(){
-    this.getPosts();
+
+  componentDidMount() {
+    soundManager.setup({
+      useHTML5Audio: true,
+      onready: function() {
+        this.setState({smReady: true});
+        console.log("ready?", this.state.smReady);
+      },
+      ontimeout: function() {
+        console.log("Something went wrong, soundmanager couldn't load");
+      }
+    })
   }
 
   updateLoggedInUser(user) {
@@ -44,12 +55,7 @@ class Main extends Component {
     axios.get("/api/songs").then(result => {
       this.setState({posts: result.data})
       console.log(this.state.posts);
-//    this.setCurrentTrack();
-    })
-  }
-
-  setCurrentTrack() {
-
+    });
   }
 
   isLoggedIn() {
@@ -80,7 +86,7 @@ class Main extends Component {
         <MenuSlider toggleMenu={this.toggleMenu} showMenu={this.state.showMenu} isLoggedIn={this.isLoggedIn} handleLogout={this.handleLogout} />
         <div className="main">
           <Switch>
-            <Route exact path='/' render={(props) => <Playlist {...props} posts={this.state.posts} /> } />
+            <Route exact path='/' render={(props) => <Playlist {...props} posts={this.state.posts} getPosts={this.getPosts} /> } />
             <Route path='/admin' component={AdminPanel} />
             <Route path='/contact' component={Contact} />
             <Route path='/login' render={(props) => <Login {...props} saveLoggedInUser={this.updateLoggedInUser}/>}/>

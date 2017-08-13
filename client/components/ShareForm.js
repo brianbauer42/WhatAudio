@@ -45,8 +45,8 @@ class ShareForm extends Component {
             credentials: 'include',
             body: formData
         }).then(() => function() {
-            this.clearAllFields();
             this.props.history.push('/');
+            this.clearAllFields();
         });
         e.preventDefault();
     }

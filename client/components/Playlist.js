@@ -7,6 +7,10 @@ class Playlist extends Component {
       this.state = { trackCards: null }
   }
 
+  componentWillMount() {
+    this.props.getPosts();
+  }
+
   trackCards() {
     if (this.props.posts) {
       return (
