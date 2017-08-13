@@ -15,7 +15,7 @@ class Playlist extends Component {
     if (this.props.posts) {
       return (
         this.props.posts.map(track => (
-          <div className="trackCard" key={track._id}>
+          <div className="trackCard" key={track._id} onClick={this.props.setCurrentTrack(track)} >
             <div className="artContainer">
             <img className="albumArt" src={'resources/' + track.artUri} alt="album cover" />
             </div>

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Switch, Route } from 'react-router-dom';
-import soundManager from 'soundmanager2';
+import { soundManager } from 'soundmanager2';
 import axios from 'axios';
 import Header from './Header.js';
 import MenuSlider from './MenuSlider.js';
@@ -19,26 +19,15 @@ class Main extends Component {
       loggedInUser: null,
       posts: null,
       currentTrack: null,
-      smReady: false
     };
 
     this.toggleMenu = this.toggleMenu.bind(this);
     this.isLoggedIn = this.isLoggedIn.bind(this);
     this.updateLoggedInUser = this.updateLoggedInUser.bind(this);
     this.getPosts = this.getPosts.bind(this);
-  }
-
-  componentDidMount() {
-    soundManager.setup({
-      useHTML5Audio: true,
-      onready: function() {
-        this.setState({smReady: true});
-        console.log("ready?", this.state.smReady);
-      },
-      ontimeout: function() {
-        console.log("Something went wrong, soundmanager couldn't load");
-      }
-    })
+    this.play = this.play.bind(this);
+    this.pause = this.pause.bind(this);
+    this.setCurrentTrack = this.setCurrentTrack.bind(this);
   }
 
   updateLoggedInUser(user) {
@@ -51,9 +40,20 @@ class Main extends Component {
     .then(() => this.updateLoggedInUser(null));
   }
 
+  setCurrentTrack(track) {
+    if (this.state.currentTrack) {
+      soundManager.destroySound(this.state.currentTrack.id);
+    }
+    this.setState({currentTrack: soundManager.createSound({
+      id: 'track_' + track._id,
+      url: '/resources/' + track.audioUri
+    })});
+  }
+
+  // id has 'track' prepended because an id starting with a numeral could break soundmanager.
   getPosts() {
     axios.get("/api/songs").then(result => {
-      this.setState({posts: result.data})
+      this.setState({posts: result.data});
       console.log(this.state.posts);
     });
   }
@@ -78,15 +78,31 @@ class Main extends Component {
     this.setState({ showMenu: !currentState });
   }
 
+  play() {
+    console.log("play", this.state.currentTrack);
+    if (!this.state.currentTrack && this.state.posts) {
+        this.setCurrentTrack(this.state.posts[0]);
+    }
+    if (this.state.currentTrack){
+      this.state.currentTrack.play();
+    }
+  }
+  
+  pause() {
+    if (this.state.currentTrack) {
+      this.state.currentTrack.pause();
+    }
+  }
+
   render() {
     return (
       <div className="App">
         <Header toggleMenu={this.toggleMenu} />
-        <Player />
+        <Player play={this.play} pause={this.pause} />
         <MenuSlider toggleMenu={this.toggleMenu} showMenu={this.state.showMenu} isLoggedIn={this.isLoggedIn} handleLogout={this.handleLogout} />
         <div className="main">
           <Switch>
-            <Route exact path='/' render={(props) => <Playlist {...props} posts={this.state.posts} getPosts={this.getPosts} /> } />
+            <Route exact path='/' render={(props) => <Playlist {...props} posts={this.state.posts} getPosts={this.getPosts} setCurrentTrack={this.setCurrentTrack} /> } />
             <Route path='/admin' component={AdminPanel} />
             <Route path='/contact' component={Contact} />
             <Route path='/login' render={(props) => <Login {...props} saveLoggedInUser={this.updateLoggedInUser}/>}/>
