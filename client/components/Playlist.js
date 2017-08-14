@@ -19,12 +19,23 @@ class Playlist extends Component {
     }
   }
 
+  handleTrackSelection(track, e) {
+    this.props.setCurrentTrack(track);
+  }
+
+  generateClassName(track) {
+    if (this.isCurrentTrack(track)) {
+      return 'trackCard currentTrack';
+    } else {
+      return 'trackCard';
+    }
+  }
+
   trackCards() {
     if (this.props.posts) {
       return (
         this.props.posts.map(track => (
-          <div className={'trackCard' + (this.isCurrentTrack(track) ? ' currentTrack' : '')} key={track._id}
-                                     onClick={(track) => this.props.setCurrentTrack} >
+          <div className={this.generateClassName(track)} key={track._id} onClick={(e) => this.handleTrackSelection(track, e)} >
             <div className="artContainer">
             <img className="albumArt" src={'resources/' + track.artUri} alt="album cover" />
             </div>
@@ -40,7 +51,6 @@ class Playlist extends Component {
       return null;
     }
   }
-
   render() {
     return (
       <div className="playlistPage">
