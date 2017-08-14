@@ -60,7 +60,7 @@ class Main extends Component {
   }
 
   setCurrentTrack(track) {
-    console.log("setting current track to: ", track);
+    console.log("setCurrentTrack called");
     if (this.state.currentTrack) {
       this.clearCurrentTrack();
     }
@@ -69,7 +69,8 @@ class Main extends Component {
         id: 'track_' + track._id,
         url: '/resources/' + track.audioUri,
         stream: true,
-        autoPlay: true
+        autoPlay: true,
+        onfinish: this.next
       }),
       currentPost: track,
       currentTrackData: {
@@ -77,13 +78,11 @@ class Main extends Component {
         mongoID: track._id
       }
     });
-    console.log("currentTrack", this.state.currentTrack);
   }
 
   getPosts() {
     axios.get("/api/songs").then(result => {
       this.setState({posts: result.data});
-      console.log(this.state.posts);
     });
   }
 
@@ -115,10 +114,7 @@ class Main extends Component {
         this.setCurrentTrack(this.state.posts[0]);
     }
     if (this.state.currentTrack){
-      this.state.currentTrack.play({
-        ended: console.log("you bastard!")
-      });
-      console.log(this.state.currentTrack);
+      this.state.currentTrack.play();
     }
   }
 
