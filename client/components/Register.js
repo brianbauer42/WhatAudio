@@ -33,14 +33,12 @@ class Register extends Component {
     }
 
     handleRegistrationSuccess(result) { 
-        console.log("registration success:", result.data.message);
         this.props.saveLoggedInUser(result.data.user);
         this.setState({message: result.data.message});
         this.props.history.push('/admin');
     }
 
     handleRegistrationFailure(result) {
-        console.log("result", result);
         if (result && result.data && result.data.message) {
         console.log("login failed:", result.data.message);
         } else {

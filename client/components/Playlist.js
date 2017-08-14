@@ -51,6 +51,7 @@ class Playlist extends Component {
       return null;
     }
   }
+  
   render() {
     return (
       <div className="playlistPage">

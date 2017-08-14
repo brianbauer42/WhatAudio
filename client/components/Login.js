@@ -21,7 +21,6 @@ class Login extends Component {
     }
 
     handleInputChange(field, e) {
-        console.log(field, e);
         const newStateUser = this.state.user;
         newStateUser[field] = e.target.value;
         this.setState({user: newStateUser});
@@ -40,7 +39,6 @@ class Login extends Component {
     }
 
     handleLoginFailure(result) {
-        console.log("result", result);
         if (result && result.data && result.data.message) {
         console.log("login failed:", result.data.message);
         } else {

@@ -60,7 +60,6 @@ class Main extends Component {
   }
 
   setCurrentTrack(track) {
-    console.log("SETCURRENTTRACK CALLED", track);
     if (this.state.currentTrack) {
       this.clearCurrentTrack();
     }
