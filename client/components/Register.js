@@ -14,8 +14,8 @@ class Register extends Component {
                 verify: ''
             }
         }
-
-        this.clearAllFields = this.clearAllFields.bind(this);
+        this.handleRegistrationFailure = this.handleRegistrationFailure.bind(this);
+        this.handleRegistrationSuccess = this.handleRegistrationSuccess.bind(this);
         this.clearPasswordFields = this.clearPasswordFields.bind(this);
         this.handleInputChange = this.handleInputChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);

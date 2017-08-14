@@ -11,11 +11,20 @@ class Playlist extends Component {
     this.props.getPosts();
   }
 
+  isCurrentTrack(track) {
+    if (this.props.currentTrackID && track._id === this.props.currentTrackID) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   trackCards() {
     if (this.props.posts) {
       return (
         this.props.posts.map(track => (
-          <div className="trackCard" key={track._id} onClick={this.props.setCurrentTrack(track)} >
+          <div className={'trackCard' + (this.isCurrentTrack(track) ? ' currentTrack' : '')} key={track._id}
+                                     onClick={(track) => this.props.setCurrentTrack} >
             <div className="artContainer">
             <img className="albumArt" src={'resources/' + track.artUri} alt="album cover" />
             </div>
@@ -36,16 +45,6 @@ class Playlist extends Component {
     return (
       <div className="playlistPage">
         <div className="playlistContainer">
-
-          <div className="trackCard currentTrack">
-            <div className="artContainer">
-              <img className="albumArt" src="https://i.imgur.com/L5RDDvU.jpg" alt="album cover" />
-            </div>
-            <div className="postBody">
-              <h5>Spoon - Chicago at Night</h5>
-              <p>Spoon is the best ever!</p>
-            </div>
-          </div>
 
           {this.trackCards()}
 

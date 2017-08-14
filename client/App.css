@@ -42,11 +42,16 @@ input {
 }
 
 .contactAddress,
-.nowPlaying,
 .colorClick {
   transition-property: color;
   transition-duration: .75s;
   transition-timing-function: ease-out;
+}
+
+.nowPlaying {
+  transition-property: color;
+  transition-duration: 4s;
+  transition-timing-function: ease-out
 }
 
 .colorClick:hover {
@@ -58,7 +63,7 @@ input {
 }
 
 .colorClick:active,
-.player > h3:hover,
+.nowPlaying:hover,
 .banner:hover,
 .contactAddress:hover,
 .isPlaying {
@@ -161,9 +166,15 @@ input {
   align-self: center;
 }
 
-.player > h3 {
+.nowPlaying {
   margin-bottom: 0;
   margin-top: 8px;
+  margin-right: 8px;
+  margin-left: 8px;
+}
+
+.titleGlow {
+  color: #FA5555;
 }
 
 .playerControls {
@@ -251,14 +262,14 @@ h2 {
 }
 
 .currentTrack {
-  animation: activePulse 6s infinite;
+  animation: activePulse 5s infinite;
 }
 
 @keyframes activePulse {
   0% {
     border: 5px solid black;
   }
-  4% {
+  7% {
     border: 5px solid darkslategray;
   }
   35% {
@@ -267,7 +278,7 @@ h2 {
   65% {
     border: 5px solid #FF5555;
   }
-  96% {
+  93% {
     border: 5px solid darkslategray;
   }
   100% {

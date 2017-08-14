@@ -31,7 +31,6 @@ module.exports = {
         res.send(err);
       }
       res.send(result);
-      console.log("result", result);
     });
   },
 
