@@ -6,7 +6,8 @@ class Register extends Component {
         super(props);
 
         this.state = {
-            errors: {},
+            errorMsg: '',
+            successMsg: '',
             user: {
                 name: '',
                 email: '',
@@ -28,34 +29,73 @@ class Register extends Component {
     }
 
     clearPasswordFields() {
-        this.handleInputChange('password', {target: {value: ''}});
-        this.handleInputChange('verify', {target: {value: ''}});
+        this.setState({
+            user: {
+                password: '',
+                verify: ''
+            }
+        })
     }
 
-    handleRegistrationSuccess(result) { 
+    clearMessages() {
+        this.setState({
+            successMsg: '',
+            errorMsg: ''
+        });
+    }
+
+    handleRegistrationSuccess(result) {
         this.props.saveLoggedInUser(result.data.user);
-        this.setState({message: result.data.message});
-        this.props.history.push('/admin');
+        this.setState({successMsg: result.data.message});
+        setTimeout(() => {
+            this.props.history.push('/admin');   
+        }, 1200);
     }
 
     handleRegistrationFailure(result) {
+        console.log(result);
         if (result && result.data && result.data.message) {
-        console.log("login failed:", result.data.message);
+        this.setState({errorMsg: result.data.message});
         } else {
-            console.log("unknown registration failure");
+            this.setState({errorMsg: "Unknown registration failure!"});
         }
     }
 
     handleSubmit(e) {
         e.preventDefault();
+        this.clearMessages();
         var self = this;
         if (this.state.user.password !== this.state.user.verify) {
-            this.setState({errors: "Password didn't match!"});
+            this.setState({errorMsg: "Passwords didn't match!"});
             this.clearPasswordFields();
         } else {
             axios.post("/api/user/register", {
                 signup: this.state.user
             }).then( (result) => this.handleRegistrationSuccess(result), (result) => this.handleRegistrationFailure(result));
+        }
+    }
+
+    getErrorComponent() {
+        if (!this.state.errorMsg) {
+            return;
+        } else {
+            return (
+                <div className="errorContainer">
+                    <p>{this.state.errorMsg}</p>
+                </div>
+            )
+        }
+    }
+
+    getSuccessComponent() {
+        if (!this.state.successMsg) {
+            return;
+        } else {
+            return (
+                <div className="successContainer">
+                    <p>{this.state.successMsg}</p>
+                </div>
+            )
         }
     }
 
@@ -107,6 +147,10 @@ class Register extends Component {
                         </div>
                         <button type='submit'>Submit</button>
                     </form>
+
+                    {this.getErrorComponent()}
+                    {this.getSuccessComponent()}
+
                 </div>
             </div>
         )

@@ -171,18 +171,16 @@ class Main extends Component {
 
           <Switch>
             <Route exact path='/' render={(props) => <Playlist {...props}
-                                                      posts={this.state.posts}
-                                                      getPosts={this.getPosts}
-                                                      setCurrentTrack={this.setCurrentTrack}
-                                                      currentTrackID={this.state.currentTrackData.mongoID}
-                                                      playerGlow={ this.state.currentTrack ? !this.state.currentTrack.paused : false }
+                                                        posts={this.state.posts}
+                                                        getPosts={this.getPosts}
+                                                        setCurrentTrack={this.setCurrentTrack}
+                                                        currentTrackID={this.state.currentTrackData.mongoID}
+                                                        playerGlow={ this.state.currentTrack ? !this.state.currentTrack.paused : false }
                                                       /> } />
             <Route path='/admin' component={AdminPanel} />
             <Route path='/contact' component={Contact} />
-            <Route path='/login' render={(props) => <Login {...props}
-                                                      saveLoggedInUser={this.updateLoggedInUser}
-                                                    /> } />
-            <Route path='/register' component={Register}/>
+            <Route path='/login' render={(props) => <Login {...props} saveLoggedInUser={this.updateLoggedInUser}/> } />
+            <Route path='/register' render={(props) => <Register {...props} saveLoggedInUser={this.updateLoggedInUser}/> } />
           </Switch>
 
         </div>

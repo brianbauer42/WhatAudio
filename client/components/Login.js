@@ -6,14 +6,15 @@ class Login extends Component {
         super(props);
             
         this.state = {
+            errorMsg: '',
+            successMsg: '',
             user: {
                 email: '',
                 password: ''
             },
-            message: ''
         }
 
-        this.clearAllFields = this.handleInputChange.bind(this);
+        this.clearAllFields = this.clearAllFields.bind(this);
         this.handleInputChange = this.handleInputChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleLoginSuccess = this.handleLoginSuccess.bind(this);
@@ -27,31 +28,71 @@ class Login extends Component {
     }
 
     clearAllFields() {
-        this.handleInputChange('email', {e: {target: {value: ''}}});
-        this.handleInputChange('password', {e: {target: {value: ''}}});
+        console.log("clearing");
+        this.setState({
+            user: {
+                email: '',
+                password: ''
+            }
+        })
+    }
+
+    clearMessages() {
+        this.setState({
+            successMsg: '',
+            errorMsg: ''
+        });
     }
 
     handleLoginSuccess(result) { 
-        console.log("login success:", result.data.message);
+        console.log("login success res.data:", result.data);
         this.props.saveLoggedInUser(result.data.user);
-        this.setState({message: result.data.message});
-        this.props.history.push('/admin');
+        this.setState({successMsg: result.data.message});
+        setTimeout(() => {
+            this.props.history.push('/admin');   
+        }, 1200);
     }
 
     handleLoginFailure(result) {
+        console.log("login failure res.data:", result.data);
         if (result && result.data && result.data.message) {
-        console.log("login failed:", result.data.message);
+        this.setState({errorMsg: result.data.message});
         } else {
-            console.log("unknown login failure");
+            this.setState({errorMsg: "Unknown login failure..."});
         }
         this.clearAllFields();
     }
 
     handleSubmit(e) {
         e.preventDefault();
+        this.clearMessages();
         axios.post("/api/user/login", {
             login: this.state.user
         }).then( (result) => this.handleLoginSuccess(result), (result) => this.handleLoginFailure(result));
+    }
+
+    getErrorComponent() {
+        if (!this.state.errorMsg) {
+            return;
+        } else {
+            return (
+                <div className="errorContainer">
+                    <p>{this.state.errorMsg}</p>
+                </div>
+            )
+        }
+    }
+
+    getSuccessComponent() {
+        if (!this.state.successMsg) {
+            return;
+        } else {
+            return (
+                <div className="successContainer">
+                    <p>{this.state.successMsg}</p>
+                </div>
+            )
+        }
     }
 
     render(){
@@ -81,7 +122,10 @@ class Login extends Component {
                         </div>
                         <button type='submit'>Login</button>
                     </form>
-                    {this.state.message ? <p className="successMessage">{this.state.message}</p> : null}
+
+                    {this.getErrorComponent()}
+                    {this.getSuccessComponent()}
+
                 </div>
             </div>
         )

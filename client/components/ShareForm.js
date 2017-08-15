@@ -5,6 +5,8 @@ class ShareForm extends Component {
         super(props);
 
         this.state = {
+            errorMsg: '',
+            successMsg: '',
             post: {
                 artist: '',
                 title: '',
@@ -32,11 +34,6 @@ class ShareForm extends Component {
         this.setState({post: newStatePost});
     }
 
-    clearAllFields() {
-        this.handleInputChange('email', {e: {target: {value: ''}}});
-        this.handleInputChange('password', {e: {target: {value: ''}}});
-    }
-
     handleSubmit(e) {
         var formElement = document.querySelector('#newPostForm');
         var formData = new FormData(formElement);
@@ -44,11 +41,40 @@ class ShareForm extends Component {
             method: "POST",
             credentials: 'include',
             body: formData
-        }).then(() => function() {
-            this.props.history.push('/');
-            this.clearAllFields();
-        });
+        }).then((result) => function(result) {
+            this.setState({successMsg: "Posted successfully!"});
+            setTimeout(() => {
+                this.props.history.push('/');   
+            }, 1200);
+        }), (result) => function(result) {
+            console.log("didn't work!");
+            this.setState({errorMsg: "Error, post failed!"});
+        };
         e.preventDefault();
+    }
+
+    getErrorComponent() {
+        if (!this.state.errorMsg) {
+            return;
+        } else {
+            return (
+                <div className="errorContainer">
+                    <p>{this.state.errorMsg}</p>
+                </div>
+            )
+        }
+    }
+
+    getSuccessComponent() {
+        if (!this.state.successMsg) {
+            return;
+        } else {
+            return (
+                <div className="successContainer">
+                    <p>{this.state.successMsg}</p>
+                </div>
+            )
+        }
     }
 
     render(){
@@ -120,6 +146,10 @@ class ShareForm extends Component {
                     </div>
                     <button type="submit">Share!</button>
                 </form>
+
+                {this.getErrorComponent()}
+                {this.getSuccessComponent()}
+
             </div>
         )
     }
