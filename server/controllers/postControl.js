@@ -1,4 +1,5 @@
 const Post = require('./../models/Post.js');
+const User = require('./../models/User.js');
 const fs = require('fs');
 const path = require('path');
 
@@ -12,7 +13,12 @@ module.exports = {
       if (err) {
         res.send(err);
       }
-      res.send(result);
+      User.update(
+        { _id: req.user._id }, 
+        { $push: { posts: result._id } }, function () {
+          res.send(result);
+        }
+      );
     });
   },
 

@@ -115,6 +115,7 @@ class Login extends Component {
                                 value={this.state.user.email}
                                 onChange={(e) => this.handleInputChange('email', e)}
                                 placeholder="email@address.com"
+                                autoFocus={true}
                             />
                         </div>
                         <div >

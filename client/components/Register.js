@@ -121,6 +121,7 @@ class Register extends Component {
                                 value={this.state.user.name}
                                 onChange={(e) => this.handleInputChange('name', e)}
                                 placeholder="Your name"
+                                autoFocus={true}
                             />
                         </div>
                         <div >

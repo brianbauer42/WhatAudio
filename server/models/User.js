@@ -6,7 +6,8 @@ var userSchema = new mongoose.Schema({
     password: { type: String, required: true },
     displayName: { type: String, unique: true },
     isAdmin: { type: Boolean },
-    posts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Post' }]
+    posts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Post' }],
+    invites: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Invite' }]
 });
 
 // Encrypts password and salts it 10 times.

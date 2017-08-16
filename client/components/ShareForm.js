@@ -100,6 +100,7 @@ class ShareForm extends Component {
                             placeholder="Title"
                             value={this.state.title}
                             onChange={(e) => this.handleInputChange('title', e)}
+                            autoFocus={true}
                         />
                     </div>
                     <div>
