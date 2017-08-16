@@ -1,13 +1,13 @@
+const crypto = require('crypto');
 const Invite = require('./../models/Invite.js');
-const inviteHandler = require('./../inviteHandler.js');
+const User = require('./../models/User.js');
 
 module.exports = {
   create: function(req, res) {
     var newCode = new Invite();
-    console.log(req.body);
     newCode.generatedBy = req.user._id;
     newCode.note = req.body.note;
-    newCode.code = inviteHandler.uuidv4();
+    newCode.code = crypto.randomBytes(16).toString("hex");
     newCode.save(function(err, result){
       if (err) {
         res.send(err);
@@ -21,10 +21,11 @@ module.exports = {
     });
   },
 
-  readByUser: function(req, res) {
+  readMine: function(req, res) {
     Invite.find({
         generatedBy: req.user._id,
-    }).exec(function (err, result) {
+    }).populate('claimedBy')
+    .exec(function (err, result) {
       if (err) {
         return res.send(err);
       }

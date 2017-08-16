@@ -22,7 +22,7 @@ class Main extends Component {
       currentTrack: null,
       currentTrackData: {
         mongoID: null,
-        displayText: "I'm waiting for you..."
+        displayText: "Do you feel lucky..."
       }
     };
 

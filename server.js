@@ -7,6 +7,7 @@ const session = require('express-session');
 const formidable = require('express-formidable');
 const userCtrl = require('./server/controllers/userControl');
 const postCtrl = require('./server/controllers/postControl');
+const inviteCtrl = require('./server/controllers/inviteControl');
 const auth = require('./server/passport/auth');
 const config = require('./config.js');
 const uploadManagement = require('./server/uploadManagement.js');
@@ -56,10 +57,13 @@ app.post('/api/songs/upload', auth.requireLogin,
   uploadManagement.arrangeUploadedFiles,
   postCtrl.create
 );
+app.get('/api/songs', postCtrl.getAll);
+app.put('/api/songs:id', auth.requireLogin, postCtrl.update);
+app.delete('/api/songs:id', auth.requireLogin, postCtrl.delete);
 
-app.get('/api/songs', postCtrl.getAll)
-app.put('/api/songs:id', auth.requireLogin, postCtrl.update)
-app.delete('/api/songs:id', auth.requireLogin, postCtrl.delete)
+// Invite Code related endpoints
+app.post('/api/invites/generate', auth.requireLogin, inviteCtrl.create);
+app.get('/api/invites/getmine', auth.requireLogin, inviteCtrl.readMine);
 
 // Return contact email from config. Just because I need practice.
 app.get('/api/contactemail', function(req, res) {
