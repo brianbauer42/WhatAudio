@@ -19,6 +19,7 @@ class Login extends Component {
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleLoginSuccess = this.handleLoginSuccess.bind(this);
         this.handleLoginFailure = this.handleLoginFailure.bind(this);
+        this.checkIfSuccessful = this.checkIfSuccessful.bind(this);
     }
 
     handleInputChange(field, e) {
@@ -28,7 +29,6 @@ class Login extends Component {
     }
 
     clearAllFields() {
-        console.log("clearing");
         this.setState({
             user: {
                 email: '',
@@ -45,7 +45,6 @@ class Login extends Component {
     }
 
     handleLoginSuccess(result) { 
-        console.log("login success res.data:", result.data);
         this.props.saveLoggedInUser(result.data.user);
         this.setState({successMsg: result.data.message});
         setTimeout(() => {
@@ -54,7 +53,6 @@ class Login extends Component {
     }
 
     handleLoginFailure(result) {
-        console.log("login failure res.data:", result.data);
         if (result && result.data && result.data.message) {
         this.setState({errorMsg: result.data.message});
         } else {
@@ -63,12 +61,20 @@ class Login extends Component {
         this.clearAllFields();
     }
 
+    checkIfSuccessful(result) {
+        if (result.data.err){
+            this.handleLoginFailure(result);
+        } else {
+            this.handleLoginSuccess(result);
+        }
+    }
+
     handleSubmit(e) {
         e.preventDefault();
         this.clearMessages();
         axios.post("/api/user/login", {
             login: this.state.user
-        }).then( (result) => this.handleLoginSuccess(result), (result) => this.handleLoginFailure(result));
+        }).then((result) => this.checkIfSuccessful(result));
     }
 
     getErrorComponent() {

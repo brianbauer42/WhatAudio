@@ -6,7 +6,7 @@ class AdminPanel extends Component {
     render() {
         return (
             <div className="adminPage">
-                <ShareForm />
+                <ShareForm history={this.props.history}/>
                 <GenerateUsers />
             </div>
         );

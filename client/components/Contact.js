@@ -7,8 +7,6 @@ class Contact extends Component {
     this.state = {
       contactPageEmail: 'fetching...'
     };
-
-    // this.getContactEmail = this.getContactEmail.bind(this);
   }
 
   componentDidMount() {

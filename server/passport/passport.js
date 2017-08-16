@@ -1,6 +1,9 @@
 const LocalStrategy = require('passport-local').Strategy;
 const User = require('./../models/User.js');
 
+// 1-32 characters long, containing upper and lowercase letters, numbers, and underscores.
+const validDisplayName = /^[a-zA-Z0-9_]{1,32}$/;
+
 module.exports = function(passport) {
     passport.serializeUser(function(user, done) {
         done(null, user.id);
@@ -19,15 +22,21 @@ module.exports = function(passport) {
         },
         function(req, email, password, done) {
             process.nextTick(function() {
+            if (!validDisplayName.test(req.body.signup.name)) {
+                return done(null, false, { message: "Names may contain only letters, numbers, or _ and must be under 33 characters"})
+            }
             User.findOne({$or: [
                 { 'email': email },
-                { 'name': req.body.signup.name }
+                { 'displayName': req.body.signup.name }
                 ]}, function(err, user) {
-                if (err) return done(err);
+                if (err) {
+                    console.log(err);
+                    return done(err, false);
+                }
                 if (user && (user.displayName === req.body.signup.name)) {
-                    return done(null, false, { message: 'User name already taken.' });
+                    return done(null, false, { message: "User name already taken." });
                 } else if (user && (user.email === email)) {
-                    return done(null, false, { message: 'An account with the email address already exists' });
+                    return done(null, false, { message: "This email already has an account." });
                 } else if (req.body.signup.password !== req.body.signup.verify) {
                     return (done(null, false, { message: "The passwords don't match!"}));
                 } else {
@@ -36,7 +45,10 @@ module.exports = function(passport) {
                     newUser.displayName = req.body.signup.name;
                     newUser.password    = newUser.generateHash(password);
                     newUser.save(function(err) {
-                        if (err) console.log(err);
+                        if (err) {
+                            console.log(err);
+                            return done(err, false);
+                        }
                         return done(null, newUser, { message: "Welcome, " + newUser.displayName + "!" });
                     });
                 }

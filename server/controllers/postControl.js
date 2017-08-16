@@ -5,8 +5,8 @@ const path = require('path');
 module.exports = {
   create: function(req, res) {
     var newPost = new Post(req.fields);
-    newPost.audioUri = path.basename(req.files.audio.path);
-    newPost.artUri = path.basename(req.files.art.path);
+    newPost.audioUri = req.user.displayName + '/' + path.basename(req.files.audio.path);
+    newPost.artUri = req.user.displayName + '/' + path.basename(req.files.art.path);
     newPost.sharedBy = req.user._id;
     newPost.save(function(err, result){
       if (err) {

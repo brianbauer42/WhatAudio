@@ -20,6 +20,9 @@ class ShareForm extends Component {
         this.handleFileChange = this.handleFileChange.bind(this);
         this.handleInputChange = this.handleInputChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.getErrorComponent = this.getErrorComponent.bind(this);
+        this.getSuccessComponent = this.getSuccessComponent.bind(this);
+        this.clearMessages = this.clearMessages.bind(this);
     }
 
     handleInputChange(field, e) {
@@ -34,6 +37,13 @@ class ShareForm extends Component {
         this.setState({post: newStatePost});
     }
 
+    clearMessages() {
+        this.setState({
+            errorMsg: '',
+            successMsg: ''
+        })
+    }
+
     handleSubmit(e) {
         var formElement = document.querySelector('#newPostForm');
         var formData = new FormData(formElement);
@@ -41,13 +51,12 @@ class ShareForm extends Component {
             method: "POST",
             credentials: 'include',
             body: formData
-        }).then((result) => function(result) {
+        }).then(() => {
             this.setState({successMsg: "Posted successfully!"});
             setTimeout(() => {
                 this.props.history.push('/');   
             }, 1200);
-        }), (result) => function(result) {
-            console.log("didn't work!");
+        }), () => {
             this.setState({errorMsg: "Error, post failed!"});
         };
         e.preventDefault();
@@ -132,6 +141,7 @@ class ShareForm extends Component {
                     <div>
                         <input type='file'
                             name='audio'
+                            accept='.flac,.mp3,.ogg,.opus, audio/webm,audio/ogg,audio/flac,audio/mpeg'
                             onChange={(e) => this.handleFileChange('audio', e)}
                         />
                     </div> 
@@ -141,6 +151,7 @@ class ShareForm extends Component {
                     <div>
                         <input type='file'
                             name='art'
+                            accept='.png,.jpeg,.jpg,.bmp,.webp,.gif, image/gif,image/jpeg,image/bmp,image/webp,image/png'
                             onChange={(e) => this.handleFileChange('art', e)}
                         />
                     </div>

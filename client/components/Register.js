@@ -20,6 +20,7 @@ class Register extends Component {
         this.clearPasswordFields = this.clearPasswordFields.bind(this);
         this.handleInputChange = this.handleInputChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.checkIfSuccessful = this.checkIfSuccessful.bind(this);
     }
 
     handleInputChange(field, e) {
@@ -53,11 +54,18 @@ class Register extends Component {
     }
 
     handleRegistrationFailure(result) {
-        console.log(result);
         if (result && result.data && result.data.message) {
         this.setState({errorMsg: result.data.message});
         } else {
             this.setState({errorMsg: "Unknown registration failure!"});
+        }
+    }
+
+    checkIfSuccessful(result) {
+        if (result.data.err){
+            this.handleRegistrationFailure(result);
+        } else {
+            this.handleRegistrationSuccess(result);
         }
     }
 
@@ -71,7 +79,7 @@ class Register extends Component {
         } else {
             axios.post("/api/user/register", {
                 signup: this.state.user
-            }).then( (result) => this.handleRegistrationSuccess(result), (result) => this.handleRegistrationFailure(result));
+            }).then( (result) => this.checkIfSuccessful(result));
         }
     }
 

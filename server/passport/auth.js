@@ -1,9 +1,51 @@
+const passport = require('passport');
+
 module.exports = {
+    registerNewUser: function(req, res, next) {
+        passport.authenticate('local-signup', function(err, user, info) {
+            if (err) {
+                return next(err);
+            }
+            if (!user) {
+                info.err = true;
+                res.json(info);
+            } else {
+                req.logIn(user, function() {
+                    info.err = false;
+                    info.user = {};
+                    info.user.displayName = user.displayName;
+                    info.user._id = user._id;
+                    res.send(info);
+                })
+            }
+        })(req, res, next);
+    },
+
+    loginExistingUser: function(req, res, next) {
+        passport.authenticate('local-login', function(err, user, info) {
+            if (err) {
+                return next(err);
+            }
+            if (!user) {
+                info.err = true;
+                res.json(info);
+            } else {
+                req.logIn(user, function() {
+                    info.err = false;
+                    info.user = {};
+                    info.user.displayName = user.displayName;
+                    info.user._id = user._id;
+                    res.send(info);
+                })
+            }
+        })(req, res, next);
+    },
+    
     requireLogin: function(req, res, next) {
         if (req.user) {
             next();
         } else {
-            res.redirect('/');
+            res.json({message: "You are not logged in!"});
         }
     }
     // ifIsAdmin: function(req, res, next) {

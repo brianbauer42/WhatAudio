@@ -5,13 +5,11 @@ const mongoose = require('mongoose');
 const passport = require('passport');
 const session = require('express-session');
 const formidable = require('express-formidable');
-const flash = require('connect-flash');
 const userCtrl = require('./server/controllers/userControl');
 const postCtrl = require('./server/controllers/postControl');
 const auth = require('./server/passport/auth');
 const config = require('./config.js');
-const startup = require('./server/startup.js');
-const headers = require('./server/headers.js');
+const uploadManagement = require('./server/uploadManagement.js');
 const app = express();
 require('./server/passport/passport')(passport);
 
@@ -20,22 +18,19 @@ app.use(session({
   saveUninitialized: true,
   resave: true
 }));
-app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(__dirname + '/public'));
-app.use('/resources', express.static(config.formidableConfig.uploadDir, {
-    setHeaders: headers.applyStreamingHeaders
-  }));
-startup.setup();
+app.use('/resources', express.static(config.uploadDir));
+uploadManagement.ensureUploadDirExists();
 
 // ---------------- API ROUTES ----------------
 // These are authentication related routes for creation and authentication of accounts.
-app.post('/api/user/register', passport.authenticate('local-signup', { failureFlash: true }), userCtrl.login);
-app.post('/api/user/login', passport.authenticate('local-login', { failureFlash: true }), userCtrl.login);
+app.post('/api/user/register', auth.registerNewUser);
+app.post('/api/user/login', auth.loginExistingUser);
 app.get('/api/user/logout', function(req, res){
   req.logout();
   res.redirect('/');
@@ -50,7 +45,18 @@ app.put('/api/user/:id', auth.requireLogin, userCtrl.update);
 app.delete('/api/user/:id', auth.requireLogin, userCtrl.delete);
 
 // Routes for posting and reading entries
-app.post('/api/songs/upload', auth.requireLogin, formidable(config.formidableConfig), postCtrl.create);
+app.post('/api/songs/upload', auth.requireLogin,
+  formidable({
+    uploadDir: config.uploadDir,
+    multiples: true,
+    keepExtensions: true
+  }),
+  uploadManagement.testForValidExtensions,
+  uploadManagement.ensureUserUploadDirExists,
+  uploadManagement.arrangeUploadedFiles,
+  postCtrl.create
+);
+
 app.get('/api/songs', postCtrl.getAll)
 app.put('/api/songs:id', auth.requireLogin, postCtrl.update)
 app.delete('/api/songs:id', auth.requireLogin, postCtrl.delete)
@@ -58,7 +64,7 @@ app.delete('/api/songs:id', auth.requireLogin, postCtrl.delete)
 // Return contact email from config. Just because I need practice.
 app.get('/api/contactemail', function(req, res) {
   res.setHeader('Content-Type', 'application/json');
-  res.send(JSON.stringify(config.contactPageEmail));
+  res.json(config.contactPageEmail);
 })
 
 // --------- HOT RELOAD STUFF FOR DEV MODE -------
