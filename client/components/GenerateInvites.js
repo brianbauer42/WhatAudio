@@ -24,7 +24,6 @@ class GenerateUsers extends Component {
 
     getAvailableInviteCodes() {
         axios.get("/api/invites/getmine").then((result) => {
-            console.log("got invites result", result);
             if (result.data) {
                 this.setState({ inviteCodes: result.data });
             }
@@ -46,7 +45,6 @@ class GenerateUsers extends Component {
                 noteInput: '',
                 inviteCodes: newInviteState
             });
-            console.log("updated this.state", this.state);
         });
     }
 
