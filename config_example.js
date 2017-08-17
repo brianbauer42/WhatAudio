@@ -9,4 +9,6 @@ module.exports = {
     devPort: 8080,
     contactPageEmail: "",
     uploadDir: "./uploads",
+    allowRegistrations: true,
+    openRegistrations: false
 }

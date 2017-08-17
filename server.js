@@ -11,6 +11,7 @@ const inviteCtrl = require('./server/controllers/inviteControl');
 const auth = require('./server/passport/auth');
 const config = require('./config.js');
 const uploadManagement = require('./server/uploadManagement.js');
+//const onStartup = require('./server/onStartup.js');
 const app = express();
 require('./server/passport/passport')(passport);
 
@@ -105,6 +106,7 @@ mongoose.connect(config.mongoUri, { useMongoClient: true });
 mongoose.connection.on('error', console.error.bind(console, 'Connection error!'));
 mongoose.connection.once('open', function(){
   console.log("MongoDB connected successfully");
+//  onStartup.inviteFirstUser();
 });
 
 // Render the index (referring to root of views specified in middleware section (__dirname + '/public'))

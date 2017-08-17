@@ -1,8 +1,18 @@
 const passport = require('passport');
-const Invite = require('./../models/Invite');
-module.exports = {
+const Invite = require('./../models/Invite.js');
+const config = require('./../../config.js');
 
+module.exports = {
     verifyInviteCode: function(req, res, next) {
+        var info = {};
+        if (config.allowRegistrations === false) {
+            info.err = true;
+            info.message = "Registrations are disabled";
+            res.json(info);
+        }
+        if (config.openRegistrations) {
+            next();
+        } 
         Invite.findOne({
         code: req.body.signup.inviteCode
         }).exec(function (err, result) {
@@ -13,7 +23,6 @@ module.exports = {
                 req.body.invite = result;
                 next();
             } else {
-                var info = {};
                 info.err = true;
                 if (!result) {
                     info.message = "Invalid invite code!";
