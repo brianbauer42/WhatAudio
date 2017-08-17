@@ -30,7 +30,7 @@ uploadManagement.ensureUploadDirExists();
 
 // ---------------- API ROUTES ----------------
 // These are authentication related routes for creation and authentication of accounts.
-app.post('/api/user/register', auth.registerNewUser);
+app.post('/api/user/register', auth.verifyInviteCode, auth.registerNewUser, auth.consumeInviteCode);
 app.post('/api/user/login', auth.loginExistingUser);
 app.get('/api/user/logout', function(req, res){
   req.logout();

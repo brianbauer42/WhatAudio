@@ -1,6 +1,40 @@
 const passport = require('passport');
-
+const Invite = require('./../models/Invite');
 module.exports = {
+
+    verifyInviteCode: function(req, res, next) {
+        Invite.findOne({
+        code: req.body.signup.inviteCode
+        }).exec(function (err, result) {
+            if (err) {
+                return res.send(err);
+            }
+            if (result && result.wasClaimed == false) {
+                req.body.invite = result;
+                next();
+            } else {
+                var info = {};
+                info.err = true;
+                if (!result) {
+                    info.message = "Invalid invite code!";
+                } else {
+                    info.message = "Invite code has already been used!";
+                }
+                res.json(info);
+            }
+        })
+    },
+
+    consumeInviteCode: function(req, res, next) {
+        req.body.invite.wasClaimed = true;
+        req.body.invite.claimedBy = req.user._id;
+        req.body.invite.save(function(err){
+            if (err) {
+                console.log(err);
+            }
+        });
+    },
+
     registerNewUser: function(req, res, next) {
         passport.authenticate('local-signup', function(err, user, info) {
             if (err) {
@@ -16,6 +50,7 @@ module.exports = {
                     info.user.displayName = user.displayName;
                     info.user._id = user._id;
                     res.send(info);
+                    next();
                 })
             }
         })(req, res, next);

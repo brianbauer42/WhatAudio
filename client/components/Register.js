@@ -12,7 +12,8 @@ class Register extends Component {
                 name: '',
                 email: '',
                 password: '',
-                verify: ''
+                verify: '',
+                inviteCode: ''
             }
         }
         this.handleRegistrationFailure = this.handleRegistrationFailure.bind(this);
@@ -152,6 +153,15 @@ class Register extends Component {
                                 value={this.state.user.verify}
                                 onChange={(e) => this.handleInputChange('verify', e)}
                                 ref="verify"
+                            />
+                        </div>
+                        <div >
+                            <label>Invite Code</label>
+                        </div>
+                        <div >
+                            <input type='text'
+                                value={this.state.user.inviteCode}
+                                onChange={(e) => this.handleInputChange('inviteCode', e)}
                             />
                         </div>
                         <button type='submit'>Submit</button>
