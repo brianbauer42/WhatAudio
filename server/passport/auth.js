@@ -8,13 +8,13 @@ module.exports = {
         if (config.allowRegistrations === false) {
             info.err = true;
             info.message = "Registrations are disabled";
-            res.json(info);
+            return res.json(info);
         }
         if (config.openRegistrations) {
-            next();
+            return next();
         } 
         Invite.findOne({
-        code: req.body.signup.inviteCode
+            code: req.body.signup.inviteCode
         }).exec(function (err, result) {
             if (err) {
                 return res.send(err);
