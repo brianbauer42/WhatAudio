@@ -15,10 +15,9 @@ module.exports = {
       }
       User.update(
         { _id: req.user._id }, 
-        { $push: { posts: result._id } }, function () {
-          res.send(result);
-        }
-      );
+        { $push: { posts: result._id } }
+      ).exec();
+      res.send(result);
     });
   },
 
@@ -50,8 +49,7 @@ module.exports = {
   },
 
   delete: function(req, res){
-    console.log(req.user._id, req.params.id);
-    Post.findByIdAndRemove(req.params.id, req.body, function(err, result){
+    Post.findByIdAndRemove(req.params.id, function(err, result){
       if (err) {
         res.send(err);
       }

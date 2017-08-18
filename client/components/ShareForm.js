@@ -6,6 +6,7 @@ class ShareForm extends Component {
 
         this.state = {
             errorMsg: '',
+            waitingMsg: '',
             successMsg: '',
             post: {
                 artist: '',
@@ -22,6 +23,7 @@ class ShareForm extends Component {
         this.handleSubmit = this.handleSubmit.bind(this);
         this.getErrorComponent = this.getErrorComponent.bind(this);
         this.getSuccessComponent = this.getSuccessComponent.bind(this);
+        this.getWaitingComponent = this.getWaitingComponent.bind(this);
         this.clearMessages = this.clearMessages.bind(this);
     }
 
@@ -40,11 +42,13 @@ class ShareForm extends Component {
     clearMessages() {
         this.setState({
             errorMsg: '',
+            waitingMsg: '',
             successMsg: ''
         })
     }
 
     handleSubmit(e) {
+        this.setState({ waitingMsg: 'Uploading...'});
         var formElement = document.querySelector('#newPostForm');
         var formData = new FormData(formElement);
         fetch("/api/songs/upload", {
@@ -52,12 +56,12 @@ class ShareForm extends Component {
             credentials: 'include',
             body: formData
         }).then(() => {
-            this.setState({successMsg: "Posted successfully!"});
+            this.setState({successMsg: "Posted successfully!", waitingMsg: ''});
             setTimeout(() => {
                 this.props.history.push('/');   
             }, 1200);
         }), () => {
-            this.setState({errorMsg: "Error, post failed!"});
+            this.setState({errorMsg: "Error, post failed!", waitingMsg: ''});
         };
         e.preventDefault();
     }
@@ -81,6 +85,18 @@ class ShareForm extends Component {
             return (
                 <div className="successContainer">
                     <p>{this.state.successMsg}</p>
+                </div>
+            )
+        }
+    }
+
+    getWaitingComponent() {
+        if (!this.state.waitingMsg) {
+            return;
+        } else {
+            return (
+                <div className="waitingContainer">
+                    <p>{this.state.waitingMsg}</p>
                 </div>
             )
         }
@@ -160,6 +176,7 @@ class ShareForm extends Component {
                 </form>
 
                 {this.getErrorComponent()}
+                {this.getWaitingComponent()}
                 {this.getSuccessComponent()}
 
             </div>

@@ -73,7 +73,7 @@ class Main extends Component {
       }),
       currentPost: track,
       currentTrackData: {
-        displayText: track.artist + ": " + track.title,
+        displayText: track.artist + " - " + track.title,
         mongoID: track._id
       }
     });

@@ -11,7 +11,7 @@ const inviteCtrl = require('./server/controllers/inviteControl');
 const auth = require('./server/passport/auth');
 const config = require('./config.js');
 const uploadManagement = require('./server/uploadManagement.js');
-//const onStartup = require('./server/onStartup.js');
+const onStartup = require('./server/onStartup.js');
 const app = express();
 require('./server/passport/passport')(passport);
 
@@ -59,8 +59,8 @@ app.post('/api/songs/upload', auth.requireLogin,
   postCtrl.create
 );
 app.get('/api/songs', postCtrl.getAll);
-app.put('/api/songs:id', auth.requireLogin, postCtrl.update);
-app.delete('/api/songs:id', auth.requireLogin, postCtrl.delete);
+app.put('/api/songs/:id', auth.requireLogin, postCtrl.update);
+app.delete('/api/songs/:id', auth.requireLogin, postCtrl.delete);
 
 // Invite Code related endpoints
 app.post('/api/invites/generate', auth.requireLogin, inviteCtrl.create);
@@ -74,7 +74,7 @@ app.get('/api/contactemail', function(req, res) {
 
 // --------- HOT RELOAD STUFF FOR DEV MODE -------
 if (process.env.NODE_ENV === 'production') {
-  console.log('Running in production mode');
+  console.log('\x1b[33m%s\x1b[0m', 'Running in production mode');
   app.use('/static', express.static(__dirname + '/static'));
 } else {
   // When not in production, enable hot reloading
@@ -105,8 +105,8 @@ if (process.env.NODE_ENV === 'production') {
 mongoose.connect(config.mongoUri, { useMongoClient: true });
 mongoose.connection.on('error', console.error.bind(console, 'Connection error!'));
 mongoose.connection.once('open', function(){
-  console.log("MongoDB connected successfully");
-//  onStartup.inviteFirstUser();
+  console.log('\x1b[32m%s\x1b[0m', 'MongoDB connected successfully');
+  onStartup.inviteFirstUser();
 });
 
 // Render the index (referring to root of views specified in middleware section (__dirname + '/public'))
@@ -119,6 +119,6 @@ app.listen((process.env.NODE_ENV === 'production' ? config.productionPort : conf
   if (err) {
     return console.error(err);
   }
-  console.log('Spinning up the records! Tune in on the following frequency: '
+  console.log('\x1b[32m%s\x1b[0m', 'Spinning up the records! Tune in on the following frequency: '
   + (process.env.NODE_ENV === 'production' ? config.productionPort : config.devPort));
 });

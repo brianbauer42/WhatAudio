@@ -89,6 +89,7 @@ module.exports = {
         if (req.user) {
             next();
         } else {
+            res.status(403);
             res.json({message: "You are not logged in!"});
         }
     }

@@ -286,18 +286,9 @@ h2 {
   }
 }
 
-.errorContainer {
-  border: 2px solid black;
-  background-color: #BF7877;
-  border-radius: 4px;
-  text-align: center;
-  margin-top: 8px;
-  padding-top: .3em;
-  padding-bottom: .3em;
-  width: 100%;
-  height: 100%;
-}
 
+.waitingContainer,
+.errorContainer,
 .successContainer {
   border: 2px solid black;
   background-color: #5cb85c;
@@ -308,4 +299,59 @@ h2 {
   padding-bottom: .3em;
   width: 100%;
   height: 100%;
+}
+
+.waitingContainer {
+  background-color: palegoldenrod;
+}
+
+
+.errorContainer {
+  background-color: #BF7877;
+}
+
+.successContainer {
+  background-color: #5cb85c;
+}
+
+.postEditButton,
+.postDeleteButton {
+  display: inline-block;
+  position: relative;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  text-decoration: none;
+  color: rgba(0, 0, 0, .85);
+}
+
+.postEditButton {
+  right: 30px;
+  top: 22px;
+}
+
+.postDeleteButton {
+  right: 00px;
+  top: 00px;
+}
+
+.redButton {
+  width: 50%;
+  color: red;
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+
+.greenButton {
+  width: 50%;
+  color: green;
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+
+.areYouSure {
+  margin-top: 20px;
 }

@@ -18,7 +18,6 @@
 
     handleSubmit(e) {
         console.log('A user submitted a search: ', this.state.search);
-        this.setState({ search: ''});
         e.preventDefault();
     }
 
