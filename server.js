@@ -40,11 +40,11 @@ app.get('/api/user/logout', function(req, res){
 
 // These routes are for modifying or retrieving info about the users in the database.
 // There is no create because passport handles all user creation in passport/passport.js
-app.get('/api/user/whoami', userCtrl.whoAmI);
+app.get('/api/user/whoami', auth.whoAmI);
 app.get('/api/user', auth.requireLogin, userCtrl.getAll);
-app.get('/api/user/:id', userCtrl.read);
-app.put('/api/user/:id', auth.requireLogin, userCtrl.update);
-app.delete('/api/user/:id', auth.requireLogin, userCtrl.delete);
+app.get('/api/user/:id', auth.requireLogin, userCtrl.read);
+// app.put('/api/user/:id', auth.requireLogin, userCtrl.update);
+// app.delete('/api/user/:id', auth.requireLogin, userCtrl.delete);
 
 // Routes for posting and reading entries
 app.post('/api/songs/upload', auth.requireLogin,

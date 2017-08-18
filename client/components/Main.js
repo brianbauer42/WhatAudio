@@ -38,8 +38,16 @@ class Main extends Component {
     this.previous = this.previous.bind(this);
   }
 
+  componentDidMount() {
+    axios.get('/api/user/whoami')
+    .then((response) => this.updateLoggedInUser(response.data), (result) => {
+      console.log(response);
+    });
+  }
+
   updateLoggedInUser(user) {
     this.setState({loggedInUser: user})
+    console.log(this.state.loggedInUser);
   }
 
   handleLogout() {

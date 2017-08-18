@@ -40,6 +40,7 @@ module.exports = {
   },
 
   update: function(req, res){
+    req.body.dateEdited = Date.now();
     Post.findByIdAndUpdate(req.params.id, req.body, function(err, result){
       if (err) {
         return res.send(err);

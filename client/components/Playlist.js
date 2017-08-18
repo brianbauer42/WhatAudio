@@ -9,12 +9,12 @@ class Playlist extends Component {
         tracksBeingEdited: [],
         tracksBeingDeleted: []
       }
+
       this.standardTrackCard = this.standardTrackCard.bind(this);
       this.editingTrackCard = this.editingTrackCard.bind(this);
-      this.handleInputChange = this.handleInputChange.bind(this);  
+      this.deletingTrackCard = this.deletingTrackCard.bind(this);
+      this.handleInputChange = this.handleInputChange.bind(this);
   }
-
-  
 
   componentWillMount() {
     this.props.getPosts();
@@ -58,13 +58,21 @@ class Playlist extends Component {
   handleDeletePost(id, e) {
     this.stopEventBubbling(e);
     axios.delete("/api/songs/" + id)
-      .then(this.props.getPosts(), (result) => function(result){
-        this.props.history.push('/login');
-      });
+    .then(this.props.getPosts(), (result) => function(result){
+      console.log("PUSH HISTORY /LOGIN!");
+      this.props.history.push('/login');
+    });
   }
   
-  handleEditPost(e) {
-
+  handleEditPost(track, e) {
+    this.stopEventBubbling(e);
+    axios.put("api/songs/" + track._id, this.state[track._id])
+    .then((result) => {
+      this.props.getPosts()
+      this.toggleEditTrackCard(track);
+    }, (result) => {
+      this.props.history.push('/login');
+    });
   }
 
   toggleEditTrackCard(track, e) {
@@ -158,10 +166,11 @@ class Playlist extends Component {
               onChange={(e) => this.handleInputChange('postBody', track._id, e)}
             />
             <p className="postAuthor">- {track.sharedBy.displayName}</p>
+            <button type="submit" onClick={this.handleEditPost.bind(this, track)} >Save</button>
           </form>
         </div>
         <i className='fa fa-pencil-square-o fa-lg colorClick postEditButton' onClick={this.toggleEditTrackCard.bind(this, track) } />
-        <i className='fa fa-times fa-lg colorClick postDeleteButton' onClick={this.handleDeletePost.bind(this, track._id)} />
+        <i className='fa fa-times fa-lg colorClick postDeleteButton' onClick={this.toggleDeleteTrackCard.bind(this, track._id)} />
       </div>
     )
   }

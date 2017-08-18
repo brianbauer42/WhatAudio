@@ -55,9 +55,8 @@ module.exports = {
             } else {
                 req.logIn(user, function() {
                     info.err = false;
-                    info.user = {};
-                    info.user.displayName = user.displayName;
-                    info.user._id = user._id;
+                    info.user = user;
+                    info.user.password = null;
                     res.send(info);
                     next();
                 })
@@ -76,9 +75,8 @@ module.exports = {
             } else {
                 req.logIn(user, function() {
                     info.err = false;
-                    info.user = {};
-                    info.user.displayName = user.displayName;
-                    info.user._id = user._id;
+                    info.user = user;
+                    info.user.password = null;
                     res.send(info);
                 })
             }
@@ -92,7 +90,16 @@ module.exports = {
             res.status(403);
             res.json({message: "You are not logged in!"});
         }
-    }
+    },
+
+    whoAmI: function(req, res) {
+        if (!req.user) {
+            return res.send();
+        }
+        req.user.password = null;
+        res.send(req.user);
+    },
+
     // ifIsAdmin: function(req, res, next) {
     //     if (req.user && req.user.isAdmin) {
     //         next();

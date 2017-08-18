@@ -4,18 +4,6 @@ const passport = require('passport');
 module.exports = {
   // Find current user, then check that a user is logged in.
   // (passport middleware creates req.user for logged in users)
-  whoAmI: function(req, res) {
-      if (!req.user){
-      return res.send();
-    }
-    User.findById(req.user._id).exec(function (err, result) {
-      if (err) {
-        return res.send(err);
-      }
-      res.send(result);
-    });
-  },
-
   read: function(req, res) {
     User.findById(req.params.id).exec(function (err, result) {
       if (err) {

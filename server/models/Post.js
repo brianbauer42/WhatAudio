@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
 
 var Post = new mongoose.Schema({
-    timestamp: { type: Date, default: Date.now },
+    dateCreated: { type: Date, default: Date.now },
+    dateEdited: { type: Date },
     title: { type: String },
     album: { type: String },
     artist: { type: String },

@@ -45,6 +45,7 @@ class Login extends Component {
     }
 
     handleLoginSuccess(result) { 
+        console.log('result', result);
         this.props.saveLoggedInUser(result.data.user);
         this.setState({successMsg: result.data.message});
         setTimeout(() => {
@@ -54,7 +55,7 @@ class Login extends Component {
 
     handleLoginFailure(result) {
         if (result && result.data && result.data.message) {
-        this.setState({errorMsg: result.data.message});
+            this.setState({errorMsg: result.data.message});
         } else {
             this.setState({errorMsg: "Unknown login failure..."});
         }
