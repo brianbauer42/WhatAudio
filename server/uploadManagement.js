@@ -2,27 +2,10 @@ const fs = require('fs');
 const path = require('path');
 const config = require('./../config.js');
 
-const dirPermissions = 0744;
 const validImageExtensions = [".jpeg", ".jpg", ".gif", ".bmp", ".webp", ".png"];
 const validAudioExtensions = [".mp3", ".ogg", ".flac", ".opus"];
 
 module.exports = {
-    ensureUploadDirExists: function() {
-        const path = config.uploadDir;
-        fs.mkdir(path, dirPermissions, function(err) {
-            if (err) {
-                if (err.code == 'EEXIST') {
-                    console.log("Specified upload directory exists: ", path);
-                } else {
-                    console.log("Error creating upload directory: ", path);
-                    console.log(err);
-                }
-            } else {
-                console.log("Created upload directory: ", path);
-            }
-        });
-    },
-
     testForValidExtensions: function(req, res, next) {
         var foundErr = false;
         if (!req.files.audio || !validAudioExtensions.includes(path.extname(req.files.audio.path))) {
@@ -42,7 +25,7 @@ module.exports = {
 
     ensureUserUploadDirExists: function(req, res, next) {
         const path = config.uploadDir + '/' + req.user.displayName;
-        fs.mkdir(path, dirPermissions, function(err) {
+        fs.mkdir(path, 0744, function(err) {
             if (err) {
                 if (err.code == 'EEXIST'){
                     console.log("User upload dir already exists, did not create: ", path);

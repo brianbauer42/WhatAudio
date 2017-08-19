@@ -4,6 +4,7 @@ const crypto = require('crypto');
 const mongoose = require('mongoose');
 const Invite = require('./models/Invite.js');
 const User = require('./models/User.js');
+const config = require('./../config.js');
 
 const createAndSaveFirstInvite = function() {
     var newCode = new Invite();
@@ -20,6 +21,22 @@ const createAndSaveFirstInvite = function() {
 }
 
 module.exports = {
+    ensureUploadDirExists: function() {
+        const path = config.uploadDir;
+        fs.mkdir(path, 0744, function(err) {
+            if (err) {
+                if (err.code == 'EEXIST') {
+                    console.log("Specified upload directory exists: ", path);
+                } else {
+                    console.log("Error creating upload directory: ", path);
+                    console.log(err);
+                }
+            } else {
+                console.log("Created upload directory: ", path);
+            }
+        });
+    },
+
     inviteFirstUser: function() {
         User.findOne({}).exec(function (err, result) {
             if (err) {

@@ -59,7 +59,6 @@ class Playlist extends Component {
     this.stopEventBubbling(e);
     axios.delete("/api/songs/" + id)
     .then(this.props.getPosts(), (result) => function(result){
-      console.log("PUSH HISTORY /LOGIN!");
       this.props.history.push('/login');
     });
   }
@@ -115,8 +114,10 @@ class Playlist extends Component {
           <p>{track.postBody}</p>
           <p className="postAuthor">- {track.sharedBy.displayName}</p>
         </div>
-        <i className='fa fa-pencil-square-o fa-lg colorClick postEditButton' onClick={this.toggleEditTrackCard.bind(this, track) } />
-        <i className='fa fa-times fa-lg colorClick postDeleteButton' onClick={this.toggleDeleteTrackCard.bind(this, track) } />
+        <div className="postButtonsContainer">
+          <i className='fa fa-pencil-square-o fa-lg colorClick postEditButton' onClick={this.toggleEditTrackCard.bind(this, track) } />
+          <i className='fa fa-times fa-lg colorClick postDeleteButton' onClick={this.toggleDeleteTrackCard.bind(this, track) } />
+        </div>
       </div>
     )
   }
@@ -169,8 +170,10 @@ class Playlist extends Component {
             <button type="submit" onClick={this.handleEditPost.bind(this, track)} >Save</button>
           </form>
         </div>
-        <i className='fa fa-pencil-square-o fa-lg colorClick postEditButton' onClick={this.toggleEditTrackCard.bind(this, track) } />
-        <i className='fa fa-times fa-lg colorClick postDeleteButton' onClick={this.toggleDeleteTrackCard.bind(this, track._id)} />
+        <div className="postButtonsContainer">
+          <i className='fa fa-pencil-square-o fa-lg colorClick postEditButton' onClick={this.toggleEditTrackCard.bind(this, track) } />
+          <i className='fa fa-times fa-lg colorClick postDeleteButton' onClick={this.toggleDeleteTrackCard.bind(this, track._id)} />
+        </div>
       </div>
     )
   }

@@ -31,7 +31,7 @@ module.exports = {
   },
 
   getAll: function(req, res) {
-    Post.find({}).populate('sharedBy', 'displayName').exec(function (err, result) {
+    Post.find(req.query).populate('sharedBy', 'displayName').exec(function (err, result) {
       if (err) {
         res.send(err);
       }

@@ -18,11 +18,12 @@ class Main extends Component {
       showMenu: false,
       loggedInUser: null,
       posts: null,
+      postOrder: 'newest-first',
       currentPost: null,
       currentTrack: null,
       currentTrackData: {
         mongoID: null,
-        displayText: "Do you feel lucky..."
+        displayText: "Press Play..."
       }
     };
 
@@ -87,9 +88,24 @@ class Main extends Component {
     });
   }
 
+  sortPosts(posts) {
+    if (this.state.postOrder === 'newest-first') {
+      return (posts.sort(function(a, b){
+        return (new Date(b.dateCreated) - new Date(a.dateCreated));
+      }));
+    } else if (this.state.postOrder === 'oldest-first') {
+      return (posts.sort(function(a, b){
+        return (new Date(a.dateCreated) - new Date(b.dateCreated));
+      }));
+    } else {
+      return (posts);
+    }
+  }
+
   getPosts() {
     axios.get("/api/songs").then(result => {
-      this.setState({posts: result.data});
+      var sortedPosts = this.sortPosts(result.data);
+      this.setState({posts: sortedPosts});
     });
   }
 

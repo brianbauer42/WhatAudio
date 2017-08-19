@@ -72,6 +72,7 @@ input {
 
 .menuContainer {
   position: fixed;
+  z-index: 1;
   top: 76px;
   left: 0px;
   width: 240px;
@@ -132,9 +133,11 @@ input {
 .postBody {
   display: inline-block;
   float: left;
+  width: 100%;
 }
 
 .trackCard {
+  position: relative;
   display: flex;
   border: 5px solid transparent;
   border-image: linear-gradient(to left, darkslategray 80%, #FF5555) 10;
@@ -328,14 +331,26 @@ h2 {
   color: rgba(0, 0, 0, .85);
 }
 
-.postEditButton {
-  right: 30px;
-  top: 22px;
+.postButtonsContainer {
+  position: absolute;
+  top: 20px;
+  right: 20px;
 }
 
-.postDeleteButton {
-  right: 00px;
-  top: 00px;
+.postDeleteButton,
+.postEditButton {
+  display: inline-block;
+}
+
+.postEditButton {
+  padding-right: 5px;
+}
+
+.postAuthor {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  margin: 0;
 }
 
 .redButton {

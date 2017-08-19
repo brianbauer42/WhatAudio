@@ -27,7 +27,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(__dirname + '/public'));
 app.use('/resources', express.static(config.uploadDir));
-uploadManagement.ensureUploadDirExists();
+onStartup.ensureUploadDirExists();
 
 // ---------------- API ROUTES ----------------
 // These are authentication related routes for creation and authentication of accounts.
@@ -66,7 +66,7 @@ app.delete('/api/songs/:id', auth.requireLogin, postCtrl.delete);
 app.post('/api/invites/generate', auth.requireLogin, inviteCtrl.create);
 app.get('/api/invites/getmine', auth.requireLogin, inviteCtrl.readMine);
 
-// Return contact email from config. Just because I need practice.
+// Return contact email from config. Just because.
 app.get('/api/contactemail', function(req, res) {
   res.setHeader('Content-Type', 'application/json');
   res.json(config.contactPageEmail);
