@@ -32,6 +32,7 @@ class Main extends Component {
     this.handleLogout = this.handleLogout.bind(this);
     this.updateLoggedInUser = this.updateLoggedInUser.bind(this);
     this.getPosts = this.getPosts.bind(this);
+    this.isCurrentTrack = this.isCurrentTrack.bind(this);
     this.setCurrentTrack = this.setCurrentTrack.bind(this);
     this.clearCurrentTrack = this.clearCurrentTrack.bind(this);
     this.play = this.play.bind(this);
@@ -68,8 +69,16 @@ class Main extends Component {
     })
   }
 
+  isCurrentTrack(track) {
+    if (this.state.currentTrackData && track._id === this.state.currentTrackData.mongoID) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   setCurrentTrack(track) {
-    if (this.state.currentTrack) {
+    if (this.state.currentTrack && this.isCurrentTrack(track) === false) {
       this.clearCurrentTrack();
     }
     this.setState({
@@ -197,6 +206,7 @@ class Main extends Component {
             <Route exact path='/' render={(props) => <Playlist {...props}
                                                         posts={this.state.posts}
                                                         getPosts={this.getPosts}
+                                                        isCurrentTrack={this.isCurrentTrack}
                                                         setCurrentTrack={this.setCurrentTrack}
                                                         currentTrackID={this.state.currentTrackData.mongoID}
                                                         playerGlow={ this.state.currentTrack ? !this.state.currentTrack.paused : false }

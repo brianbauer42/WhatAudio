@@ -26,20 +26,12 @@ class Playlist extends Component {
       this.setState({[id]: newStateTrack});
   }
 
-  isCurrentTrack(track) {
-    if (this.props.currentTrackID && track._id === this.props.currentTrackID) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
   handleTrackSelection(track, e) {
     this.props.setCurrentTrack(track);
   }
 
   generateClassName(track) {
-    if (this.isCurrentTrack(track)) {
+    if (this.props.isCurrentTrack(track)) {
       return 'trackCard currentTrack';
     } else {
       return 'trackCard';
@@ -106,7 +98,7 @@ class Playlist extends Component {
     return (
       <div className={this.generateClassName(track)} key={track._id} onClick={(e) => this.handleTrackSelection(track, e)} >
         <div className="artContainer">
-          <img className="albumArt" src={'resources/' + track.artUri} alt="album cover" />
+          <img className="albumArt" src={track.artUri !== undefined ? 'resources/' + track.artUri : '/favicon.ico'} alt="album cover" />
         </div>
         <div className="postBody">
           <h5 className="trackTitle">{track.artist} - {track.title}</h5>
@@ -126,7 +118,7 @@ class Playlist extends Component {
     return (
       <div className={this.generateClassName(track)} key={track._id} >
         <div className="artContainer" onClick={(e) => this.handleTrackSelection(track, e)} >
-          <img className="albumArt" src={'resources/' + track.artUri} alt="album cover" />
+          <img className="albumArt" src={track.artUri !== undefined ? 'resources/' + track.artUri : '/favicon.ico'} alt="album cover" />
         </div>
         <div className="postBody">
           <h2 className="areYouSure">Are you sure you want to delete this track?</h2>
@@ -142,7 +134,7 @@ class Playlist extends Component {
     return (
       <div className={this.generateClassName(track)} key={track._id} >
         <div className="artContainer" onClick={(e) => this.handleTrackSelection(track, e)} >
-          <img className="albumArt" src={'resources/' + track.artUri} alt="album cover" />
+          <img className="albumArt" src={track.artUri !== undefined ? 'resources/' + track.artUri : '/favicon.ico'} alt="album cover" />
         </div>
         <div className="postBody">
           <form id="trackUpdateForm" className="trackUpdateForm" onSubmit={this.handleTrackUpdate}>
@@ -167,7 +159,7 @@ class Playlist extends Component {
               onChange={(e) => this.handleInputChange('postBody', track._id, e)}
             />
             <p className="postAuthor">- {track.sharedBy.displayName}</p>
-            <button type="submit" onClick={this.handleEditPost.bind(this, track)} >Save</button>
+            <button type="submit" onClick={this.handleEditPost.bind(this, track)} >Save Changes</button>
           </form>
         </div>
         <div className="postButtonsContainer">

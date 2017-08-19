@@ -7,7 +7,9 @@ module.exports = {
   create: function(req, res) {
     var newPost = new Post(req.fields);
     newPost.audioUri = req.user.displayName + '/' + path.basename(req.files.audio.path);
-    newPost.artUri = req.user.displayName + '/' + path.basename(req.files.art.path);
+    if (req.files.art !== undefined) {
+      newPost.artUri = req.user.displayName + '/' + path.basename(req.files.art.path);
+    }
     newPost.sharedBy = req.user._id;
     newPost.save(function(err, result){
       if (err) {

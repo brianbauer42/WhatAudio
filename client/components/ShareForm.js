@@ -51,18 +51,25 @@ class ShareForm extends Component {
         this.setState({ waitingMsg: 'Uploading...'});
         var formElement = document.querySelector('#newPostForm');
         var formData = new FormData(formElement);
+        if (this.state.post.art === '') {
+            formData.delete('art');
+        }
         fetch("/api/songs/upload", {
             method: "POST",
             credentials: 'include',
             body: formData
-        }).then(() => {
-            this.setState({successMsg: "Posted successfully!", waitingMsg: ''});
-            setTimeout(() => {
-                this.props.history.push('/');   
-            }, 1200);
-        }), () => {
-            this.setState({errorMsg: "Error, post failed!", waitingMsg: ''});
-        };
+        }).then((result) => {
+            return result.json();
+        }).then((error) => {
+            if (error && error.found === true) {
+                this.setState({ waitingMsg: '', errorMsg: error.message });
+            } else {
+                this.setState({ successMsg: "Posted successfully!", waitingMsg: '' });
+                setTimeout(() => {
+                    this.props.history.push('/');
+                }, 1200);
+            }
+        });
         e.preventDefault();
     }
 
