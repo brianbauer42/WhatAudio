@@ -206,6 +206,7 @@ class Main extends Component {
             <Route exact path='/' render={(props) => <Playlist {...props}
                                                         posts={this.state.posts}
                                                         getPosts={this.getPosts}
+                                                        isLoggedIn={this.isLoggedIn}
                                                         isCurrentTrack={this.isCurrentTrack}
                                                         setCurrentTrack={this.setCurrentTrack}
                                                         currentTrackID={this.state.currentTrackData.mongoID}

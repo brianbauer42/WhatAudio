@@ -48,7 +48,7 @@ class Register extends Component {
 
     handleRegistrationSuccess(result) {
         this.props.saveLoggedInUser(result.data.user);
-        this.setState({successMsg: result.data.message});
+        this.setState({ successMsg: result.data.message });
         setTimeout(() => {
             this.props.history.push('/admin');   
         }, 1200);
@@ -56,9 +56,9 @@ class Register extends Component {
 
     handleRegistrationFailure(result) {
         if (result && result.data && result.data.message) {
-        this.setState({errorMsg: result.data.message});
+        this.setState({ errorMsg: result.data.message });
         } else {
-            this.setState({errorMsg: "Unknown registration failure!"});
+            this.setState({ errorMsg: "Unknown registration failure!"});
         }
     }
 
@@ -75,8 +75,8 @@ class Register extends Component {
         this.clearMessages();
         var self = this;
         if (this.state.user.password !== this.state.user.verify) {
-            this.setState({errorMsg: "Passwords didn't match!"});
-            this.clearPasswordFields();
+            this.setState({ errorMsg: "Passwords didn't match!" });
+            //this.clearPasswordFields();
         } else {
             axios.post("/api/user/register", {
                 signup: this.state.user

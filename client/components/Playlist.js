@@ -101,15 +101,17 @@ class Playlist extends Component {
           <img className="albumArt" src={track.artUri !== undefined ? 'resources/' + track.artUri : '/favicon.ico'} alt="album cover" />
         </div>
         <div className="postBody">
-          <h5 className="trackTitle">{track.artist} - {track.title}</h5>
-          <h5 className="albumTitle">From: {track.album}</h5>
-          <p>{track.postBody}</p>
+          <h4 className="trackTitle">{track.artist} - {track.title}</h4>
+          <h5 className="albumTitle">{track.album}</h5>
+          <p className="postBodyText">{track.postBody}</p>
           <p className="postAuthor">- {track.sharedBy.displayName}</p>
         </div>
+        {this.props.isLoggedIn() ? 
         <div className="postButtonsContainer">
           <i className='fa fa-pencil-square-o fa-lg colorClick postEditButton' onClick={this.toggleEditTrackCard.bind(this, track) } />
           <i className='fa fa-times fa-lg colorClick postDeleteButton' onClick={this.toggleDeleteTrackCard.bind(this, track) } />
         </div>
+          : null }
       </div>
     )
   }
@@ -148,7 +150,7 @@ class Playlist extends Component {
                 onChange={(e) => this.handleInputChange('title', track._id, e)}
               />
             </h5>
-            <h5>From: 
+            <h5>Album: 
               <input type='text' 
                 value={this.state[track._id].album}
                 onChange={(e) => this.handleInputChange('album', track._id, e)}

@@ -134,13 +134,21 @@ input {
   display: inline-block;
   float: left;
   width: 100%;
+  margin-bottom: 20px;
+  margin-right: 20px;
+  margin-top: 20px;
+}
+
+.postBodyText {
+  margin-top: 5px;
+  margin-bottom: 0;
 }
 
 .trackCard {
   position: relative;
   display: flex;
   border: 5px solid transparent;
-  border-image: linear-gradient(to left, darkslategray 80%, #FF5555) 10;
+  border-image: linear-gradient(to left, darkslategray 30%,  #FF5555 70%) 10;
   margin: 10px;
   height: 220px;
 }
@@ -148,7 +156,7 @@ input {
 .trackCard:hover {
   display: flex;
   border: 5px solid transparent;
-  border-image: linear-gradient(to left, darkslategray 30%, #FF5555) 10;
+  border-image: linear-gradient(to right,  #FF5555 60%, darkslategray ) 10;
   margin: 10px;
   height: 220px;
 
@@ -369,4 +377,17 @@ h2 {
 
 .areYouSure {
   margin-top: 20px;
+}
+
+.trackTitle {
+  margin: 0;
+}
+
+.albumTitle {
+  margin-top: 3px;
+}
+
+.trackTitle,
+.albumTitle {
+  margin-bottom: 3px;
 }
