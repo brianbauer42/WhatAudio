@@ -23,6 +23,16 @@ module.exports = {
     });
   },
 
+  search: function(req, res) {
+    var queryString = req.query.q.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+      Post.find({ $text : { $search : queryString } }).populate('sharedBy', 'displayName').exec(function (err, result) {
+        if (err) {
+          res.send(err);
+        }
+        res.send(result);
+      });
+  },
+
   read: function(req, res) {
     Post.findById(req.params.id).exec(function (err, result) {
       if (err) {

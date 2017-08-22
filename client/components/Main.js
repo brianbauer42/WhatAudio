@@ -38,6 +38,7 @@ class Main extends Component {
     this.play = this.play.bind(this);
     this.next = this.next.bind(this);
     this.previous = this.previous.bind(this);
+    this.setPosts = this.setPosts.bind(this);
   }
 
   componentDidMount() {
@@ -48,8 +49,7 @@ class Main extends Component {
   }
 
   updateLoggedInUser(user) {
-    this.setState({loggedInUser: user})
-    console.log(this.state.loggedInUser);
+    this.setState({loggedInUser: user});
   }
 
   handleLogout() {
@@ -111,10 +111,13 @@ class Main extends Component {
     }
   }
 
+  setPosts(posts) {
+    this.setState({posts: posts});
+  }
+
   getPosts() {
     axios.get("/api/songs").then(result => {
-      var sortedPosts = this.sortPosts(result.data);
-      this.setState({posts: sortedPosts});
+      this.setState({posts: this.sortPosts(result.data)});
     });
   }
 
@@ -187,7 +190,7 @@ class Main extends Component {
   render() {
     return (
       <div className="App">
-        <Header toggleMenu={this.toggleMenu} />
+        <Header toggleMenu={this.toggleMenu} setPosts={this.setPosts}/>
         <Player play={this.play}
                 pause={this.state.currentTrack ? this.state.currentTrack.togglePause : null}
                 next={this.next}

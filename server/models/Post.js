@@ -12,4 +12,6 @@ var Post = new mongoose.Schema({
     sharedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
 });
 
+Post.index({ title: 'text', album: 'text', artist: 'text', postBody: 'text'});
+
 module.exports = mongoose.model('Post', Post);

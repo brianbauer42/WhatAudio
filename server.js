@@ -59,6 +59,7 @@ app.post('/api/songs/upload', auth.requireLogin,
   postCtrl.create
 );
 app.get('/api/songs', postCtrl.getAll);
+app.get('/api/songs/search', postCtrl.search);
 app.put('/api/songs/:id', auth.requireLogin, postCtrl.update);
 app.delete('/api/songs/:id', auth.requireLogin, postCtrl.delete);
 

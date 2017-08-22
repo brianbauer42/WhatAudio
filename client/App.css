@@ -211,9 +211,9 @@ input {
   top: 0;
   padding-top: 14px;
   padding-bottom: 12px;
-  background: white;
+  background-color: rgba(255, 255, 255, 0.95);
   z-index: 1;
-  box-shadow: 0 4px 5px #888888;
+  box-shadow: 0 4px 5px black;
 }
 
 .playlistContainer {
