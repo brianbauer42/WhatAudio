@@ -14,7 +14,7 @@ class Header extends Component {
         <div className="bannerContainer">
           <h1 className="banner">∞</h1>
         </div>
-        <SearchBox setPosts={this.props.setPosts}/>
+        <SearchBox setPosts={this.props.setPosts} />
       </div>
     );
   }
