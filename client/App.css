@@ -4,8 +4,9 @@
 
 .searchContainer {
   position: fixed;
-  top: 24px;
-  right: 24px;
+  top: 38px;
+  right: 34px;
+  z-index: 2;
 }
 
 input {
@@ -13,8 +14,8 @@ input {
 }
 
 .banner {
-  margin-top: 10px;
-  margin-bottom: 10px;
+  margin-top: 18px;
+  margin-bottom: 2px;
   display: inline-block;
   font-size: 3em;
   -webkit-touch-callout: none;
@@ -36,9 +37,11 @@ input {
 }
 
 .openMenuButton {
-  margin: 20px;
-  float: left;
-  display: inline;
+  margin: 0;
+  position: fixed;
+  top: 32px;
+  left: 34px;
+  z-index: 2;
 }
 
 .contactAddress,
@@ -203,6 +206,14 @@ input {
   display: flex;
   justify-content: center;
   align-items: center;
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  padding-top: 14px;
+  padding-bottom: 12px;
+  background: white;
+  z-index: 1;
+  box-shadow: 0 4px 5px #888888;
 }
 
 .playlistContainer {
