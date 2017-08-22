@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
@@ -116,10 +117,9 @@ app.get('/', function(req, res){
 });
 
 // Begin serving users
-app.listen((process.env.NODE_ENV === 'production' ? config.productionPort : config.devPort), function (err) {
+app.listen(config.port, 'localhost', function (err) {
   if (err) {
     return console.error(err);
   }
-  console.log('\x1b[32m%s\x1b[0m', 'Spinning up the records! Tune in on the following frequency: '
-  + (process.env.NODE_ENV === 'production' ? config.productionPort : config.devPort));
+  console.log('\x1b[32m%s\x1b[0m', 'Spinning up the records! Tune in on the following frequency: ' + config.port);
 });
