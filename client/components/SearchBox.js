@@ -20,13 +20,10 @@
         fetch("/api/songs/search?q=" + this.state.search, {
             method: "GET",
         }).then((result) => {
-            console.log(result);
             return result.json();
         }).then((data) => {
-            console.log("data!", data);
             this.props.setPosts(data);
         })
-        console.log('A user submitted a search: ', this.state.search);
         e.preventDefault();
     }
 

@@ -24,13 +24,16 @@ module.exports = {
   },
 
   search: function(req, res) {
+    if (req.query.q === '') {
+      return module.exports.getAll(req, res);
+    }
     var queryString = req.query.q.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
-      Post.find({ $text : { $search : queryString } }).populate('sharedBy', 'displayName').exec(function (err, result) {
-        if (err) {
-          res.send(err);
-        }
-        res.send(result);
-      });
+    Post.find({ $text : { $search : queryString } }).populate('sharedBy', 'displayName').exec(function (err, result) {
+      if (err) {
+        res.send(err);
+      }
+      res.send(result);
+    });
   },
 
   read: function(req, res) {
@@ -43,7 +46,7 @@ module.exports = {
   },
 
   getAll: function(req, res) {
-    Post.find(req.query).populate('sharedBy', 'displayName').exec(function (err, result) {
+    Post.find({}).populate('sharedBy', 'displayName').exec(function (err, result) {
       if (err) {
         res.send(err);
       }

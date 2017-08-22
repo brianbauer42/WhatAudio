@@ -112,12 +112,12 @@ class Main extends Component {
   }
 
   setPosts(posts) {
-    this.setState({posts: posts});
+    this.setState({ posts: this.sortPosts(posts) });
   }
 
   getPosts() {
     axios.get("/api/songs").then(result => {
-      this.setState({posts: this.sortPosts(result.data)});
+      this.setPosts(result.data);
     });
   }
 
