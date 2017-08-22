@@ -1,5 +1,6 @@
 # What Audio
-UNDER CONSTRUCTION  
+IN DEVELOPMENT: At this stage, it works well in Chrome, FireFox, and Opera, but Safari and Edge do not support FLAC streaming. I'll add the ability for an admin to disable formats from the admin panel soon if the site operator prefers compatibility.
+
 I've long admired the format of leftasrain.com and wanted to build something similar. I'm finally setting out to do that.
 
 ## Setup Instructions:
@@ -15,11 +16,10 @@ In **package.json**, in **scripts.build:webpack**:
 change '**development**' to '**production**'  
 change webpack.config.**dev**.js to webpack.config.**prod**.js
 
-Navigate to the download location in your terminal and type **npm run go**
-
-If the server is in production mode and no running on port 80, verify that the NODE_ENV environment
-variable is set to 'production' by setting it manually in your terminal.  
+Verify that the NODE_ENV environment variable is set to 'production' by setting it from your terminal.  
 ```
 Linux/OSX: export NODE_ENV=production
 Windows: set NODE_ENV=production
 ```
+
+From inside the download folder in your terminal type **npm run go**
