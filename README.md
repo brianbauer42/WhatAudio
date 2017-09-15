@@ -1,5 +1,6 @@
-# What Audio
+# What Audio [live demo](https://beta.what.audio)
 IN DEVELOPMENT: At this stage, it works well in Chrome, FireFox, and Opera, but Safari and Edge do not support FLAC streaming. I'll add the ability for an admin to disable formats from the admin panel soon if the site operator prefers compatibility.
+DM me if you are interested in an admin code before setting up your own instance, or if I can clarify any instructions!
 
 I've long admired the format of leftasrain.com and wanted to build something similar. I'm finally setting out to do that.
 
