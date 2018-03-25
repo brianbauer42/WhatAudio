@@ -16,6 +16,9 @@ const onStartup = require('./server/onStartup.js');
 const app = express();
 require('./server/passport/passport')(passport);
 
+// Mongoose promises are deprecated, replace with standard ES6 Promise.
+mongoose.Promise = Promise;
+
 app.use(session({
   secret: config.sessionSecret,
   saveUninitialized: true,

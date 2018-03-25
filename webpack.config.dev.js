@@ -25,7 +25,7 @@ module.exports = {
         include: path.join(__dirname, 'client'),
         query: {
           plugins: ['transform-runtime'],
-          presets: ['es2015', 'react', 'react-hmre']
+          presets: ['env', 'react', 'react-hmre']
         }
       },
       {
