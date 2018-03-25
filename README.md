@@ -2,7 +2,7 @@
 IN DEVELOPMENT: At this stage, it works well in Chrome, FireFox, and Opera, but Safari and Edge do not support FLAC streaming. I'll add the ability for an admin to disable formats from the admin panel soon if the site operator prefers compatibility.
 DM me if you are interested in an admin code before setting up your own instance, or if I can clarify any instructions!
 
-I've long admired the format of leftasrain.com and wanted to build something similar. I'm finally setting out to do that.
+I've long admired the format of leftasrain.com and wanted to build something similar for my own use.
 
 ## Setup Instructions:
 Make sure to **npm install** the dependencies from within the program's directory.
@@ -10,17 +10,17 @@ Make sure to **npm install** the dependencies from within the program's director
 Rename **config_example.js** to **config.js**
 
 In **config.js**:  
-The **sessionSecret** variable must contain a random string within quotes.  
+The **sessionSecret** variable must contain a random string within quotes.
 Set the **mongoUri** variable to point to your instance of mongodb.
 
-In **package.json**, in **scripts.build:webpack**:  
-change '**development**' to '**production**'  
-change webpack.config.**dev**.js to webpack.config.**prod**.js
-
-Verify that the NODE_ENV environment variable is set to 'production' by setting it from your terminal.  
+Build and start the server in a production environment with the following command:
 ```
-Linux/OSX: export NODE_ENV=production
-Windows: set NODE_ENV=production
+npm run prod
 ```
 
-From inside the download folder in your terminal type **npm run go**
+Or start it for development (automatically rebuild when changes are detected) with:
+```
+npm run dev
+```
+
+The first time you run the server (or when the user database is empty), an invite code will be generated so that you can create the initial admin account with your own credentials.

@@ -46,9 +46,12 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
     "clean": "rimraf static",
-    "build:webpack": "cross-env NODE_ENV=development webpack --config webpack.config.dev.js",
-    "build": "npm run clean && npm run build:webpack",
-    "go": "npm run build && npm run start",
+    "build:webpack:dev": "cross-env NODE_ENV=development webpack --config webpack.config.dev.js",
+    "build:webpack:prod": "cross-env NODE_ENV=production webpack --config webpack.config.prod.js",    
+    "build:dev": "npm run clean && npm run build:webpack:dev",
+    "build:prod": "npm run clean && npm run build:webpack:prod",    
+    "dev": "npm run build:dev && npm run start",
+    "prod": "npm run build:prod && npm run start",    
     "lint": "eslint client server || true"
   },
   "repository": {
