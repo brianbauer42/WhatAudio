@@ -7,6 +7,7 @@ module.exports = {
     'webpack-hot-middleware/client',
     './client/index.js'
   ],
+  mode: 'development',
   output: {
     path: path.join(__dirname, 'static'),
     filename: 'bundle.js',
@@ -14,10 +15,9 @@ module.exports = {
   },
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
-    new webpack.NoEmitOnErrorsPlugin()
   ],
   module: {
-    loaders: [
+    rules: [
       {
         test: /\.js$/,
         loader: 'babel-loader',
@@ -33,5 +33,8 @@ module.exports = {
         loaders: ['style-loader', 'css-loader']
       }
     ]
+  },
+  optimization: {
+    noEmitOnErrors: true, // NoEmitOnErrorsPlugin
   }
 };

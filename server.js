@@ -107,7 +107,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 // Connect to the database.
-mongoose.connect(config.mongoUri, { useMongoClient: true });
+mongoose.connect(config.mongoUri, { useCreateIndex: true, useNewUrlParser: true });
 mongoose.connection.on('error', console.error.bind(console, 'Connection error!'));
 mongoose.connection.once('open', function(){
   console.log('\x1b[32m%s\x1b[0m', 'MongoDB connected successfully');

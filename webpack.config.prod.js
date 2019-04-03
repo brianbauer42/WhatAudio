@@ -9,26 +9,14 @@ module.exports = {
   entry: [
     './client/index.js'
   ],
+  mode: 'production',
   output: {
     path: path.join(__dirname, 'static'),
     filename: 'bundle.js',
     publicPath: '/static/'
   },
-  plugins: [
-    new webpack.optimize.OccurrenceOrderPlugin(),
-    new webpack.DefinePlugin({
-      'process.env': {
-        'NODE_ENV': JSON.stringify('production')
-      }
-    }),
-    new webpack.optimize.UglifyJsPlugin({
-      compressor: {
-        warnings: false
-      }
-    })
-  ],
   module: {
-    loaders: [
+    rules: [
       {
         test: /\.js$/,
         loader: 'babel-loader',
@@ -49,5 +37,8 @@ module.exports = {
         include: path.join(__dirname, 'assets/img')
       }
     ]
+  },
+  optimization: {
+    minimize: true
   }
 };
