@@ -1,23 +1,26 @@
 module.exports = {
     applyStreamingHeaders: function(res, path, stat) {
+      var re = /(?:\.([^.]+))?$/; // should grab the file extension
+      var ext = re.exec(path);
         res.set('content-length', stat.size);
-        if (path.endsWith(".jpg") || path.endsWith(".jpeg")) {
+        switch (ext) {
+          case "jpg" || "jpeg":
             res.set("Content-Type",  'image/jpeg');
-        } else if (path.toLowerCase().endsWith(".png")) {
+          case ".png":
             res.set("Content-Type",  'image/png');
-        } else if (path.toLowerCase().endsWith(".bmp")) {
+          case ".bmp":
             res.set("Content-Type",  'image/bmp');
-        } else if (path.toLowerCase().endsWith(".gif")) {
+          case ".gif":
             res.set("Content-Type",  'image/gif');
-        } else if (path.toLowerCase().endsWith(".webp")) {
+          case ".webp":
             res.set("Content-Type",  'image/webp');
-        } else if (path.toLowerCase().endsWith(".flac")) {
+          case ".flac":
             res.set("Content-Type",  'audio/flac');
-        } else if (path.toLowerCase().endsWith(".mp3")) {
+          case ".mp3":
             res.set("Content-Type",  'audio/mpeg');
-        } else if (path.toLowerCase().endsWith(".ogg")) {
+          case ".ogg":
             res.set("Content-Type",  'audio/ogg');
-        } else if (path.toLowerCase().endsWith(".opus")) {
+          case ".opus":
             res.set("Content-Type",  'audio/webm');
         }
     }
