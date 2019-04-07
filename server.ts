@@ -1,23 +1,22 @@
 #!/usr/bin/env node
-const express = require('express');
-const cors = require('cors');
-const bodyParser = require('body-parser');
-const mongoose = require('mongoose');
-const passport = require('passport');
-const session = require('express-session');
-const formidable = require('express-formidable');
-const userCtrl = require('./server/controllers/userControl');
-const postCtrl = require('./server/controllers/postControl');
-const inviteCtrl = require('./server/controllers/inviteControl');
-const auth = require('./server/passport/auth');
-const config = require('./config.js');
-const uploadManagement = require('./server/uploadManagement.js');
-const onStartup = require('./server/onStartup.js');
+import express from 'express';
+import { Request, Response } from "express";
+import cors from 'cors';
+import bodyParser from 'body-parser';
+import mongoose from 'mongoose';
+import passport from 'passport';
+import session from 'express-session';
+import formidable from 'express-formidable';
+import { read as readUser, getAll as getAllUsers } from './server/controllers/userControl';
+import { create as createPost , getAll as getAllPosts, search as searchPosts, update as updatePost, remove as removePost } from './server/controllers/postControl';
+import { create as createInvite, readMine as readMyInvite } from './server/controllers/inviteControl';
+import { requireLogin, verifyInviteCode, registerNewUser, consumeInviteCode, loginExistingUser, whoAmI } from './server/passport/auth';
+import { uploadManagement } from './server/uploadManagement';
+import { ensureUploadDirExists, inviteFirstUser } from './server/onStartup';
+
+export const config = require('./config.js');
 const app = express();
 require('./server/passport/passport')(passport);
-
-// Mongoose promises are deprecated, replace with standard ES6 Promise.
-mongoose.Promise = Promise;
 
 app.use(session({
   secret: config.sessionSecret,
@@ -31,27 +30,27 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(__dirname + '/public'));
 app.use('/resources', express.static(config.uploadDir));
-onStartup.ensureUploadDirExists();
+ensureUploadDirExists();
 
 // ---------------- API ROUTES ----------------
 // These are authentication related routes for creation and authentication of accounts.
-app.post('/api/user/register', auth.verifyInviteCode, auth.registerNewUser, auth.consumeInviteCode);
-app.post('/api/user/login', auth.loginExistingUser);
-app.get('/api/user/logout', function(req, res){
+app.post('/api/user/register', verifyInviteCode, registerNewUser, consumeInviteCode);
+app.post('/api/user/login', loginExistingUser);
+app.get('/api/user/logout', (req: Request, res: Response) => {
   req.logout();
   res.redirect('/');
 });
 
 // These routes are for modifying or retrieving info about the users in the database.
 // There is no create because passport handles all user creation in passport/passport.js
-app.get('/api/user/whoami', auth.whoAmI);
-app.get('/api/user', auth.requireLogin, userCtrl.getAll);
-app.get('/api/user/:id', auth.requireLogin, userCtrl.read);
+app.get('/api/user/whoami', whoAmI);
+app.get('/api/user', requireLogin, getAllUsers);
+app.get('/api/user/:id', requireLogin, readUser);
 // app.put('/api/user/:id', auth.requireLogin, userCtrl.update);
-// app.delete('/api/user/:id', auth.requireLogin, userCtrl.delete);
+// app.delete('/api/user/:id', auth.requireLogin, userCtrl.remove);
 
 // Routes for posting and reading entries
-app.post('/api/songs/upload', auth.requireLogin,
+app.post('/api/songs/upload', requireLogin,
   formidable({
     uploadDir: config.uploadDir,
     multiples: true,
@@ -60,19 +59,19 @@ app.post('/api/songs/upload', auth.requireLogin,
   uploadManagement.testForValidExtensions,
   uploadManagement.ensureUserUploadDirExists,
   uploadManagement.arrangeUploadedFiles,
-  postCtrl.create
+  createPost
 );
-app.get('/api/songs', postCtrl.getAll);
-app.get('/api/songs/search', postCtrl.search);
-app.put('/api/songs/:id', auth.requireLogin, postCtrl.update);
-app.delete('/api/songs/:id', auth.requireLogin, postCtrl.delete);
+app.get('/api/songs', getAllPosts);
+app.get('/api/songs/search', searchPosts);
+app.put('/api/songs/:id', requireLogin, updatePost);
+app.delete('/api/songs/:id', requireLogin, removePost);
 
 // Invite Code related endpoints
-app.post('/api/invites/generate', auth.requireLogin, inviteCtrl.create);
-app.get('/api/invites/getmine', auth.requireLogin, inviteCtrl.readMine);
+app.post('/api/invites/generate', requireLogin, createInvite);
+app.get('/api/invites/getmine', requireLogin, readMyInvite);
 
 // Return contact email from config. Just because.
-app.get('/api/contactemail', function(req, res) {
+app.get('/api/contactemail', (req: Request, res: Response) => {
   res.setHeader('Content-Type', 'application/json');
   res.json(config.contactPageEmail);
 })
@@ -83,10 +82,10 @@ if (process.env.NODE_ENV === 'production') {
   app.use('/static', express.static(__dirname + '/static'));
 } else {
   // When not in production, enable hot reloading
-  var chokidar = require('chokidar');
-  var webpack = require('webpack');
-  var webpackConfig = require('./webpack.config.dev');
-  var compiler = webpack(webpackConfig);
+  const chokidar = require('chokidar');
+  const webpack = require('webpack');
+  const webpackConfig = require('./webpack.config.dev');
+  const compiler = webpack(webpackConfig);
   app.use(require('webpack-dev-middleware')(compiler, {
     noInfo: true,
     publicPath: webpackConfig.output.publicPath
@@ -95,11 +94,11 @@ if (process.env.NODE_ENV === 'production') {
   // Do "hot-reloading" of express stuff on the server
   // Throw away cached modules and re-require next time
   // Ensure there's no important state in there!
-  var watcher = chokidar.watch('./server');
-  watcher.on('ready', function() {
-    watcher.on('all', function() {
+  const watcher = chokidar.watch('./server');
+  watcher.on('ready', () => {
+    watcher.on('all', () => {
       console.log('Clearing /server/ module cache from server');
-      Object.keys(require.cache).forEach(function(id) {
+      Object.keys(require.cache).forEach((id) => {
         if (/\/server\//.test(id)) delete require.cache[id];
       });
     });
@@ -109,18 +108,18 @@ if (process.env.NODE_ENV === 'production') {
 // Connect to the database.
 mongoose.connect(config.mongoUri, { useCreateIndex: true, useNewUrlParser: true });
 mongoose.connection.on('error', console.error.bind(console, 'Connection error!'));
-mongoose.connection.once('open', function(){
+mongoose.connection.once('open', () => {
   console.log('\x1b[32m%s\x1b[0m', 'MongoDB connected successfully');
-  onStartup.inviteFirstUser();
+  inviteFirstUser();
 });
 
 // Render the index (referring to root of views specified in middleware section (__dirname + '/public'))
-app.get('/', function(req, res){
+app.get('/', (req: Request, res: Response) => {
   res.render('index.html');
 });
 
 // Begin serving users
-app.listen(config.port, 'localhost', function (err) {
+app.listen(config.port, 'localhost', (err:  NodeJS.ErrnoException) => {
   if (err) {
     return console.error(err);
   }

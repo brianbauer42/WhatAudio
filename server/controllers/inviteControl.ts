@@ -1,6 +1,6 @@
-const crypto = require('crypto');
-const Invite = require('./../models/Invite.js');
-const User = require('./../models/User.js');
+import crypto from 'crypto';
+import Invite from './../models/Invite';
+import User from './../models/User';
 
 module.exports = {
   create: function(req, res) {

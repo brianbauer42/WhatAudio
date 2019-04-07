@@ -1,16 +1,17 @@
-const LocalStrategy = require('passport-local').Strategy;
-const User = require('./../models/User.js');
+import { Strategy as LocalStrategy } from 'passport-local';
+import { User, IUser, IUserModel } from './../models/User';
+import { Request } from "express";
 
 // 1-32 characters long, containing upper and lowercase letters, numbers, and underscores.
 const validDisplayName = /^[a-zA-Z0-9_]{1,32}$/;
 
-module.exports = function(passport) {
-    passport.serializeUser(function(user, done) {
+export default (passport: any) => {
+    passport.serializeUser((user: IUser, done: Function) => {
         done(null, user.id);
     });
 
-    passport.deserializeUser(function(id, done) {
-        User.findById(id, function(err, user) {
+    passport.deserializeUser((id: string, done: Function) => {
+        User.findById(id, (err: Error, user) => {
             done(err, user);
         });
     });
@@ -20,15 +21,15 @@ module.exports = function(passport) {
             passwordField : 'signup[password]',
             passReqToCallback : true
         },
-        function(req, email, password, done) {
+        (req, email: string, password: string, done: Function) => {
             process.nextTick(function() {
             if (!validDisplayName.test(req.body.signup.name)) {
                 return done(null, false, { message: "Names may contain only letters, numbers, or _ and must be under 33 characters"})
             }
             User.findOne({$or: [
-                { 'email': email },
-                { 'displayName': req.body.signup.name }
-                ]}, function(err, user) {
+                  { 'email': email },
+                  { 'displayName': req.body.signup.name }
+                ]}, (err: Error, user) => {
                 if (err) {
                     console.log(err);
                     return done(err, false);
@@ -44,7 +45,7 @@ module.exports = function(passport) {
                     newUser.email       = email;
                     newUser.displayName = req.body.signup.name;
                     newUser.password    = newUser.generateHash(password);
-                    newUser.save(function(err) {
+                    newUser.save((err: Error) => {
                         if (err) {
                             console.log(err);
                             return done(err, false);
@@ -61,9 +62,9 @@ module.exports = function(passport) {
             passwordField : 'login[password]',
             passReqToCallback : true
         },
-        function(req, email, password, done) {
+        (req: Request, email: string, password: string, done: Function) => {
             process.nextTick(function() {
-                User.findOne({'email': email}, function(err, user) {
+                User.findOne({'email': email}, (err: Error, user: IUserModel) => {
                     if (err) return done(err);
                     if (user && user.validPassword(password)) {
                         return done(null, user, { message: 'Welcome back, ' + user.displayName + '!' });
