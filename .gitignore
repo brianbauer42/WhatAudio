@@ -5,10 +5,11 @@
 /static
 
 # includes plaintext credentials
-config.js
+config.ts
 
 # production
 /build
+/server-built
 
 # misc
 .DS_Store

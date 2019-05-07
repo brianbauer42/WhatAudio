@@ -4,6 +4,9 @@
   "description": "An infinite playlist music platform",
   "main": "server.js",
   "dependencies": {
+    "@types/webpack": "^4.4.29",
+    "@types/webpack-dev-middleware": "^2.0.2",
+    "@types/webpack-hot-middleware": "^2.16.5",
     "axios": "^0.16.2",
     "bcrypt-nodejs": "0.0.3",
     "body-parser": "^1.18.3",
@@ -32,6 +35,7 @@
     "@types/node": "^11.13.0",
     "@types/passport": "^1.0.0",
     "@types/passport-local": "^1.0.33",
+    "awesome-typescript-loader": "^5.2.1",
     "babel-core": "^6.26.3",
     "babel-eslint": "^6.0.0",
     "babel-loader": "^7.1.0",
@@ -56,12 +60,12 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js",
-    "clean": "rimraf static",
+    "start": "node server-built/server.js",
+    "clean": "rimraf static && rimraf server-built",
     "build:webpack:dev": "cross-env NODE_ENV=development webpack --config webpack.config.dev.js",
     "build:webpack:prod": "cross-env NODE_ENV=production webpack --config webpack.config.prod.js",
     "build:dev": "npm run clean && npm run build:webpack:dev",
-    "build:prod": "npm run clean && npm run build:webpack:prod",
+    "build:prod": "npm run clean && tsc && npm run build:webpack:prod",
     "dev": "npm run build:dev && npm run start",
     "prod": "npm run build:prod && npm run start",
     "lint": "eslint client server || true"

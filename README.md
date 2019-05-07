@@ -7,9 +7,9 @@ I've long admired the format of leftasrain.com and wanted to build something sim
 ## Setup Instructions:
 Make sure to **npm install** the dependencies from within the program's directory.
 
-Rename **config_example.js** to **config.js**
+Rename **config_example** to **config.ts**
 
-In **config.js**:  
+In **config.ts**:  
 The **sessionSecret** variable must contain a random string within quotes.
 Set the **mongoUri** variable to point to your instance of mongodb.
 
