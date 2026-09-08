@@ -1,23 +1,26 @@
-import { Document, Schema, Model, model} from "mongoose";
+import mongoose from "mongoose";
+import type { HydratedDocument, Types } from "mongoose";
+
+const { Schema, model } = mongoose;
 
 export interface IInvite {
   dateCreated: Date;
-  generatedBy: string;
-  claimedBy: string;
+  generatedBy?: Types.ObjectId;
+  claimedBy?: Types.ObjectId;
   code: string;
   note: string;
   wasClaimed: boolean;
-};
+}
 
-export interface IInviteModel extends IInvite, Document {}
+export type InviteDocument = HydratedDocument<IInvite>;
 
-const InviteSchema = new Schema({
-    dateCreated: { type: Date, default: Date.now },
-    generatedBy: { type: Schema.Types.ObjectId, ref: 'User' },
-    claimedBy: { type: Schema.Types.ObjectId, ref: 'User' },
-    code: { type: String, required: true },
-    note: { type: String },
-    wasClaimed: { type: Boolean, default: false }
+const inviteSchema = new Schema<IInvite>({
+  dateCreated: { type: Date, default: Date.now },
+  generatedBy: { type: Schema.Types.ObjectId, ref: "User" },
+  claimedBy: { type: Schema.Types.ObjectId, ref: "User" },
+  code: { type: String, required: true, unique: true },
+  note: { type: String, default: "" },
+  wasClaimed: { type: Boolean, default: false },
 });
 
-export const Invite: Model<IInviteModel> = model<IInviteModel>('Invite', InviteSchema);
+export const Invite = model<IInvite>("Invite", inviteSchema);
