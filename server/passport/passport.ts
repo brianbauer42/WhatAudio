@@ -1,20 +1,24 @@
-import { Strategy as LocalStrategy } from "passport-local";
-import { User, IUser, IUserModel } from "./../models/User";
-import { Request } from "express";
-import { PassportStatic } from "passport";
+import passport from "passport";
+import passportLocal from "passport-local";
+import { User } from "../models/User.js";
 
-// 1-32 characters long, containing upper and lowercase letters, numbers, and underscores.
-const validDisplayName = /^[a-zA-Z0-9_]{1,32}$/;
+const LocalStrategy = passportLocal.Strategy;
 
-export const registerStrategies = (passport: PassportStatic) => {
-  passport.serializeUser((user: IUser, done: Function) => {
-    done(null, user.id);
+// 1-32 characters long, containing upper and lowercase letters, numbers, and
+// underscores. Also keeps display names safe to use as an upload directory name.
+const VALID_DISPLAY_NAME = /^[a-zA-Z0-9_]{1,32}$/;
+
+export const registerStrategies = (): void => {
+  passport.serializeUser<string>((user, done) => {
+    done(null, String(user._id));
   });
 
-  passport.deserializeUser((id: string, done: Function) => {
-    User.findById(id, (err: Error, user) => {
-      done(err, user);
-    });
+  passport.deserializeUser<string>(async (id, done) => {
+    try {
+      done(null, await User.findById(id));
+    } catch (error) {
+      done(error);
+    }
   });
 
   passport.use(
@@ -23,55 +27,49 @@ export const registerStrategies = (passport: PassportStatic) => {
       {
         usernameField: "signup[email]",
         passwordField: "signup[password]",
-        passReqToCallback: true
+        passReqToCallback: true,
       },
-      (req, email: string, password: string, done: Function) => {
-        process.nextTick(function() {
-          if (!validDisplayName.test(req.body.signup.name)) {
-            return done(null, false, {
+      async (req, email, password, done) => {
+        try {
+          const signup = req.body?.signup ?? {};
+          const displayName = String(signup.name ?? "");
+
+          if (!VALID_DISPLAY_NAME.test(displayName)) {
+            done(null, false, {
               message:
-                "Names may contain only letters, numbers, or _ and must be under 33 characters"
+                "Names may contain only letters, numbers, or _ and must be under 33 characters",
             });
+            return;
           }
-          User.findOne(
-            { $or: [{ email: email }, { displayName: req.body.signup.name }] },
-            (err: Error, user) => {
-              if (err) {
-                console.log(err);
-                return done(err, false);
-              }
-              if (user && user.displayName === req.body.signup.name) {
-                return done(null, false, {
-                  message: "User name already taken."
-                });
-              } else if (user && user.email === email) {
-                return done(null, false, {
-                  message: "This email already has an account."
-                });
-              } else if (req.body.signup.password !== req.body.signup.verify) {
-                return done(null, false, {
-                  message: "The passwords don't match!"
-                });
-              } else {
-                var newUser = new User();
-                newUser.email = email;
-                newUser.displayName = req.body.signup.name;
-                newUser.password = newUser.generateHash(password);
-                newUser.save((err: Error) => {
-                  if (err) {
-                    console.log(err);
-                    return done(err, false);
-                  }
-                  return done(null, newUser, {
-                    message: "Welcome, " + newUser.displayName + "!"
-                  });
-                });
-              }
-            }
-          );
-        });
-      }
-    )
+          if (!password) {
+            done(null, false, { message: "A password is required." });
+            return;
+          }
+          if (password !== signup.verify) {
+            done(null, false, { message: "The passwords don't match!" });
+            return;
+          }
+
+          const existing = await User.findOne({
+            $or: [{ email }, { displayName }],
+          });
+          if (existing?.displayName === displayName) {
+            done(null, false, { message: "User name already taken." });
+            return;
+          }
+          if (existing) {
+            done(null, false, { message: "This email already has an account." });
+            return;
+          }
+
+          // The pre-save hook hashes this before it reaches the database.
+          const user = await User.create({ email, displayName, password });
+          done(null, user, { message: `Welcome, ${user.displayName}!` });
+        } catch (error) {
+          done(error);
+        }
+      },
+    ),
   );
 
   passport.use(
@@ -80,24 +78,23 @@ export const registerStrategies = (passport: PassportStatic) => {
       {
         usernameField: "login[email]",
         passwordField: "login[password]",
-        passReqToCallback: true
       },
-      (req: Request, email: string, password: string, done: Function) => {
-        process.nextTick(function() {
-          User.findOne({ email: email }, (err: Error, user: IUserModel) => {
-            if (err) return done(err);
-            if (user && user.validPassword(password)) {
-              return done(null, user, {
-                message: "Welcome back, " + user.displayName + "!"
-              });
-            } else if (user) {
-              return done(null, false, { message: "Invalid password." });
-            } else {
-              return done(null, false, { message: "Email not found!" });
-            }
-          });
-        });
-      }
-    )
+      async (email, password, done) => {
+        try {
+          const user = await User.findOne({ email });
+          if (!user) {
+            done(null, false, { message: "Email not found!" });
+            return;
+          }
+          if (!(await user.validPassword(password))) {
+            done(null, false, { message: "Invalid password." });
+            return;
+          }
+          done(null, user, { message: `Welcome back, ${user.displayName}!` });
+        } catch (error) {
+          done(error);
+        }
+      },
+    ),
   );
 };

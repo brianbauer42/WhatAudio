@@ -1,11 +1,11 @@
 # dependencies
 /node_modules
 
-# webpack build
+# client build output
 /static
 
 # includes plaintext credentials
-config.ts
+.env
 
 # production
 /build

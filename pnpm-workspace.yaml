@@ -1,0 +1,11 @@
+# pnpm 12 reads project settings from this file rather than from package.json.
+
+# Mongoose pins mongodb ~7.5 while connect-mongo accepts ^7. Without this they
+# can resolve to two different copies of the driver, whose types then clash.
+overrides:
+  mongodb: ~7.5.0
+
+# pnpm blocks dependency lifecycle scripts by default. esbuild needs its
+# postinstall to link the platform-specific binary.
+allowBuilds:
+  esbuild: true

@@ -1,31 +1,34 @@
-import { Document, Schema, Model, model} from "mongoose";
+import mongoose from "mongoose";
+import type { HydratedDocument, Types } from "mongoose";
+
+const { Schema, model } = mongoose;
 
 export interface IPost {
   dateCreated: Date;
-  dateEdited: Date;
+  dateEdited?: Date;
   title: string;
   album: string;
   artist: string;
   postBody: string;
   audioUri: string;
-  artUri: string;
-  sharedBy: string;
-};
+  artUri?: string;
+  sharedBy: Types.ObjectId;
+}
 
-export interface IPostModel extends IPost, Document{}
+export type PostDocument = HydratedDocument<IPost>;
 
-const Post = new Schema({
-    dateCreated: { type: Date, default: Date.now },
-    dateEdited: { type: Date },
-    title: { type: String },
-    album: { type: String },
-    artist: { type: String },
-    postBody: { type: String },
-    audioUri: { type: String },
-    artUri: { type: String },
-    sharedBy: { type: Schema.Types.ObjectId, ref: 'User' }
+const postSchema = new Schema<IPost>({
+  dateCreated: { type: Date, default: Date.now },
+  dateEdited: { type: Date },
+  title: { type: String, default: "" },
+  album: { type: String, default: "" },
+  artist: { type: String, default: "" },
+  postBody: { type: String, default: "" },
+  audioUri: { type: String, required: true },
+  artUri: { type: String },
+  sharedBy: { type: Schema.Types.ObjectId, ref: "User", required: true },
 });
 
-Post.index({ title: 'text', album: 'text', artist: 'text', postBody: 'text'});
+postSchema.index({ title: "text", album: "text", artist: "text", postBody: "text" });
 
-export const PostModel: Model<IPostModel> = model<IPostModel>('Post', Post);
+export const Post = model<IPost>("Post", postSchema);

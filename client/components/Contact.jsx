@@ -1,26 +1,17 @@
-import React, { Component } from 'react';
+import { Component } from 'react';
+import { api } from '../api.js';
 
 class Contact extends Component {
   constructor(props) {
     super(props);
-
-    this.state = {
-      contactPageEmail: 'fetching...'
-    };
+    this.state = { contactPageEmail: 'fetching...' };
   }
 
   componentDidMount() {
-    this.getContactEmail();
-  }
-
-  getContactEmail() {
-    fetch('/api/contactemail')
-      .then(response => response.json())
-      .then(json => {
-        this.setState({
-          contactPageEmail: json
-        })
-      })
+    api
+      .get('/contactemail')
+      .then((response) => this.setState({ contactPageEmail: response.data.email || 'unlisted' }))
+      .catch(() => this.setState({ contactPageEmail: 'unavailable' }));
   }
 
   render() {
