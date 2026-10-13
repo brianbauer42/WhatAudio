@@ -31,7 +31,7 @@ you should at minimum set:
 - `MONGO_URI` — points at your MongoDB instance.
 
 See `.env.example` for the full list, including upload limits and whether
-registration is open or invite-only.
+anyone may register.
 
 No MongoDB handy? Docker will do:
 
@@ -74,11 +74,13 @@ with React Fast Refresh. **Open http://localhost:3000** in development — it
 proxies `/api` and `/resources` through to the API. In production everything is
 served from port 8080.
 
-## First account
+## Accounts
 
-The first time you run the server against an empty user database, an invite code
-is generated so you can create the initial admin account. It's printed to the
-console and saved to `REGISTRATION_CODE.txt`.
+For local development, `pnpm run seed` (above) creates `dev@example.com` /
+`password`. You can also sign up at `/register`: registration is open in
+development and closed in production by default. To create accounts on a
+production server, set `ALLOW_REGISTRATIONS=true`, register, then remove it and
+restart.
 
 ## Other scripts
 

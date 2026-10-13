@@ -1,6 +1,5 @@
 import passport from "passport";
 import type { NextFunction, Request, Response } from "express";
-import { Invite } from "../models/Invite.js";
 import { config } from "../config.js";
 import { HttpError } from "../httpError.js";
 import type { UserDocument } from "../models/User.js";
@@ -51,31 +50,12 @@ export const registerNewUser = async (req: Request, res: Response): Promise<void
     throw new HttpError(403, "Registrations are disabled");
   }
 
-  // Reserve the invite before creating the account, then claim it afterwards.
-  let invite = null;
-  if (!config.openRegistrations) {
-    const code = String(req.body?.signup?.inviteCode ?? "");
-    invite = await Invite.findOne({ code });
-    if (!invite) {
-      throw new HttpError(400, "Invalid invite code!");
-    }
-    if (invite.wasClaimed) {
-      throw new HttpError(400, "Invite code has already been used!");
-    }
-  }
-
   const { user, info } = await authenticate("local-signup", req, res);
   if (!user) {
     throw new HttpError(400, info.message ?? "Unknown registration failure!");
   }
 
   await logIn(req, user);
-
-  if (invite) {
-    invite.wasClaimed = true;
-    invite.claimedBy = user._id;
-    await invite.save();
-  }
 
   res.status(201).json({ user, message: info.message ?? `Welcome, ${user.displayName}!` });
 };

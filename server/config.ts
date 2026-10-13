@@ -49,7 +49,7 @@ export const config = {
   // Session cookies are HTTPS-only in production. Turn this off if you
   // terminate TLS elsewhere and genuinely serve the app over plain HTTP.
   cookieSecure: bool("COOKIE_SECURE", isProduction),
-  allowRegistrations: bool("ALLOW_REGISTRATIONS", true),
-  openRegistrations: bool("OPEN_REGISTRATIONS", false),
+  // Anyone can sign up while this is on, so it defaults to off in production.
+  allowRegistrations: bool("ALLOW_REGISTRATIONS", !isProduction),
   maxUploadBytes: num("MAX_UPLOAD_MB", 100) * 1024 * 1024,
 };
