@@ -20,7 +20,8 @@
     "prod": "pnpm run build && pnpm start",
     "dev": "concurrently -n api,web -c cyan,magenta \"pnpm run dev:server\" \"pnpm run dev:client\"",
     "dev:server": "tsx watch server/server.ts",
-    "dev:client": "vite"
+    "dev:client": "vite",
+    "seed": "tsx server/seed.ts"
   },
   "dependencies": {
     "axios": "^1.14.1",

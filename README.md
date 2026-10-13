@@ -33,6 +33,27 @@ you should at minimum set:
 See `.env.example` for the full list, including upload limits and whether
 registration is open or invite-only.
 
+No MongoDB handy? Docker will do:
+
+```
+docker run -d --name whataudio-mongo -p 127.0.0.1:27017:27017 \
+  -v whataudio-mongo-data:/data/db --restart unless-stopped mongo:8
+```
+
+### Sample tracks
+
+```
+pnpm run seed
+```
+
+This creates an admin account (`dev@example.com` / `password`) and downloads
+about 80 MB of freely licensed music into `uploads/dev/`: Kevin MacLeod tracks
+from incompetech.com (CC BY 4.0), plus public-domain and CC0 classical recordings
+and public-domain composer portraits from Wikimedia Commons. Each track's post
+carries its attribution. It's safe to re-run: downloads are cached, and tracks
+that are already posted are skipped. It refuses to run with
+`NODE_ENV=production`.
+
 ## Running it
 
 Production build and start:
@@ -68,6 +89,7 @@ console and saved to `REGISTRATION_CODE.txt`.
 | `pnpm run typecheck` | Type-check the server without emitting |
 | `pnpm run lint` | ESLint over the client and build config |
 | `pnpm run clean` | Remove `static/` and `server-built/` |
+| `pnpm run seed` | Create a dev account and download sample tracks |
 
 ## Layout
 
