@@ -35,6 +35,14 @@ export default [
     },
   },
   {
+    // React Three Fiber renders Three.js objects as JSX (<mesh position=...>),
+    // whose props are not DOM attributes.
+    files: ["client/scene/**/*.jsx"],
+    rules: {
+      "react/no-unknown-property": "off",
+    },
+  },
+  {
     // Build tooling that runs in Node
     files: ["*.config.js"],
     ...js.configs.recommended,

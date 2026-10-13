@@ -12,6 +12,17 @@ export default defineConfig(({ command }) => ({
     outDir: "static",
     emptyOutDir: true,
     sourcemap: true,
+    // The Three.js chunk is big by nature; the warning is noise.
+    chunkSizeWarningLimit: 1200,
+    rollupOptions: {
+      output: {
+        // Three.js and the fiber stack dwarf the app code; keep them in a
+        // chunk of their own so app changes don't invalidate that download.
+        codeSplitting: {
+          groups: [{ name: "three", test: /node_modules[\\/](three|@react-three|postprocessing)[\\/]/ }],
+        },
+      },
+    },
   },
   server: {
     port: 3000,

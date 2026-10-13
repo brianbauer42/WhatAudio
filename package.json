@@ -20,10 +20,13 @@
     "prod": "pnpm run build && pnpm start",
     "dev": "concurrently -n api,web -c cyan,magenta \"pnpm run dev:server\" \"pnpm run dev:client\"",
     "dev:server": "tsx watch server/server.ts",
-    "dev:client": "vite",
+    "dev:client": "vite --host",
     "seed": "tsx server/seed.ts"
   },
   "dependencies": {
+    "@react-three/drei": "^10.7.9",
+    "@react-three/fiber": "^9.8.1",
+    "@react-three/postprocessing": "^3.2.0",
     "axios": "^1.14.1",
     "bcryptjs": "^3.0.2",
     "connect-mongo": "^6.0.0",
@@ -33,12 +36,13 @@
     "express-session": "^1.18.2",
     "mongoose": "^9.9.5",
     "multer": "^2.0.2",
-    "normalize.css": "^8.0.1",
     "passport": "^0.7.0",
     "passport-local": "^1.0.0",
+    "postprocessing": "^6.39.5",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
-    "react-router-dom": "^7.9.4"
+    "react-router-dom": "^7.9.4",
+    "three": "^0.186.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.38.0",

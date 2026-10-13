@@ -74,6 +74,17 @@ with React Fast Refresh. **Open http://localhost:3000** in development — it
 proxies `/api` and `/resources` through to the API. In production everything is
 served from port 8080.
 
+## The ring
+
+The playlist is drawn as a ring of cards floating in space, built with
+[React Three Fiber](https://docs.pmnd.rs/react-three-fiber). Scroll or use the
+arrow keys to turn the ring, press Enter or click a card to play it, and Space
+to pause. The playing card glows orange, the one at the front teal.
+
+Browsers without WebGL, and people with "reduce motion" turned on, get a plain
+list instead. There's a toggle in the bottom-left corner either way, and the
+choice is remembered in `localStorage`.
+
 ## Accounts
 
 For local development, `pnpm run seed` (above) creates `dev@example.com` /
@@ -97,6 +108,10 @@ restart.
 
 - `index.html` — the Vite entry point
 - `client/` — React single-page app, bundled by Vite into `static/`
+  - `scene/` — the 3D ring: React Three Fiber canvas, cards, nebula, bloom
+  - `state/` — auth and player contexts (one shared `<audio>` element)
+  - `ui/`, `pages/` — DOM overlays and the login / register / share / contact pages
+  - `theme.js` and `styles/base.css` — the Blade Runner 2049 palette, kept in sync
 - `server/` — TypeScript Express API, compiled by `tsc` into `server-built/`
 - `public/` — static assets copied verbatim into the build (the favicon)
 - `uploads/` — uploaded audio and album art, served at `/resources`
