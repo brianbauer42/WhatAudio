@@ -7,7 +7,6 @@ const EMPTY_USER = {
   email: '',
   password: '',
   verify: '',
-  inviteCode: '',
 };
 
 class Register extends Component {
@@ -114,17 +113,6 @@ class Register extends Component {
                 autoComplete="new-password"
                 value={this.state.user.verify}
                 onChange={(event) => this.handleInputChange('verify', event)}
-              />
-            </div>
-            <div>
-              <label htmlFor="register-invite">Invite Code</label>
-            </div>
-            <div>
-              <input
-                id="register-invite"
-                type="text"
-                value={this.state.user.inviteCode}
-                onChange={(event) => this.handleInputChange('inviteCode', event)}
               />
             </div>
             <button type="submit" disabled={this.state.submitting}>

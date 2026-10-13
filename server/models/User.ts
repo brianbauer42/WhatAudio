@@ -13,7 +13,6 @@ export interface IUser {
   displayName: string;
   isAdmin: boolean;
   posts: Types.ObjectId[];
-  invites: Types.ObjectId[];
 }
 
 export interface IUserMethods {
@@ -31,7 +30,6 @@ const userSchema = new Schema<IUser, UserModel, IUserMethods>(
     displayName: { type: String, required: true, unique: true },
     isAdmin: { type: Boolean, default: false },
     posts: [{ type: Schema.Types.ObjectId, ref: "Post" }],
-    invites: [{ type: Schema.Types.ObjectId, ref: "Invite" }],
   },
   {
     // Password hashes must never leave the server, so strip them centrally

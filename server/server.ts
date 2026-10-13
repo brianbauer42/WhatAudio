@@ -19,7 +19,7 @@ import {
   whoAmI,
 } from "./passport/auth.js";
 import { receiveTrackFiles } from "./uploadManagement.js";
-import { ensureUploadDirExists, inviteFirstUser } from "./onStartup.js";
+import { ensureUploadDirExists } from "./onStartup.js";
 import { getAll as getAllUsers, read as readUser } from "./controllers/userControl.js";
 import {
   create as createPost,
@@ -29,10 +29,6 @@ import {
   search as searchPosts,
   update as updatePost,
 } from "./controllers/postControl.js";
-import {
-  create as createInvite,
-  readMine as readMyInvites,
-} from "./controllers/inviteControl.js";
 
 // Works both from `server/` under tsx and from `server-built/` after `tsc`.
 const projectRoot = path.resolve(import.meta.dirname, "..");
@@ -91,10 +87,6 @@ const buildApp = (): express.Express => {
   app.put("/api/songs/:id", requireLogin, updatePost);
   app.delete("/api/songs/:id", requireLogin, removePost);
 
-  // Invite codes.
-  app.post("/api/invites/generate", requireLogin, createInvite);
-  app.get("/api/invites/getmine", requireLogin, readMyInvites);
-
   app.get("/api/contactemail", (_req: Request, res: Response) => {
     res.json({ email: config.contactPageEmail });
   });
@@ -146,7 +138,6 @@ const buildApp = (): express.Express => {
 const main = async (): Promise<void> => {
   await connectToDatabase();
   await ensureUploadDirExists();
-  await inviteFirstUser();
 
   const server = buildApp().listen(config.port, config.host, () => {
     console.log(
