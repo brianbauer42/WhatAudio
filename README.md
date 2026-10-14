@@ -20,11 +20,11 @@ and Edge still don't support FLAC streaming, so prefer `.mp3`, `.ogg`, or
 ```
 nvm use
 pnpm install
-docker compose up -d
+docker compose up -d postgres garage
 cp .env.example .env
 ```
 
-`docker compose up -d` starts Postgres 18 and [Garage](https://garagehq.deuxfleurs.fr),
+`docker compose up -d postgres garage` starts Postgres 18 and [Garage](https://garagehq.deuxfleurs.fr),
 a small S3-compatible object store, with the bucket and credentials that
 `.env.example` already points at. Every value in `.env` has a working default for
 local development, but you should at minimum set:
@@ -73,6 +73,30 @@ port 8080.
 
 The server applies any pending database migrations on startup, so a fresh
 database needs no separate step.
+
+### Everything in Docker
+
+```
+docker compose up -d --build
+```
+
+This builds the app image (`Dockerfile`, on `node:26-alpine`) and starts it
+alongside Postgres and Garage, served at **http://localhost:8080**. It runs the
+production build with the development credentials from `compose.yaml`, plain
+HTTP cookies, and registration open. Set `SESSION_SECRET` in `.env` to override
+the placeholder secret. `pnpm run seed` from the host fills it with sample tracks
+as usual.
+
+To run the app with `pnpm run dev` instead, start just the backing services, so
+the container doesn't take port 8080:
+
+```
+docker compose up -d postgres garage
+```
+
+Inside the stack the server reaches Garage at `http://garage:3900`, while
+browsers fetch media from `http://localhost:3900`. `S3_PUBLIC_ENDPOINT` names
+that browser-facing URL, and presigned links are signed against it.
 
 ## The ring
 
@@ -152,7 +176,7 @@ Two things to get right:
   - `storage.ts` — the S3 client, presigned URLs, and bucket setup
   - `uploadManagement.ts` — multer storage engine that streams uploads into the bucket
 - `drizzle/` — generated SQL migrations, applied on startup
-- `compose.yaml`, `docker/` — local Postgres and Garage
+- `Dockerfile`, `compose.yaml`, `docker/` — the app image, plus local Postgres and Garage
 - `public/` — static assets copied verbatim into the build (the favicon)
 
 Project-level pnpm settings (allowed build scripts) live in `pnpm-workspace.yaml` —

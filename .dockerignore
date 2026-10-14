@@ -1,0 +1,12 @@
+.git
+.cache
+.claude
+node_modules
+server-built
+static
+tmp
+.env
+.env.*
+!.env.example
+Dockerfile
+compose.yaml

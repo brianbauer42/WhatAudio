@@ -118,18 +118,6 @@ importers:
       '@aws-sdk/s3-request-presigner':
         specifier: ^3.1150.0
         version: 3.1150.0
-      '@react-three/drei':
-        specifier: ^10.7.9
-        version: 10.7.9(@react-three/fiber@9.8.1(@types/react@19.3.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.186.1))(@types/react@19.3.0)(@types/three@0.186.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.186.1)
-      '@react-three/fiber':
-        specifier: ^9.8.1
-        version: 9.8.1(@types/react@19.3.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.186.1)
-      '@react-three/postprocessing':
-        specifier: ^3.2.0
-        version: 3.2.0(@react-three/fiber@9.8.1(@types/react@19.3.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.186.1))(@types/three@0.186.0)(postprocessing@6.39.5(three@0.186.1))(react@19.2.8)(three@0.186.1)
-      axios:
-        specifier: ^1.14.1
-        version: 1.20.0(debug@4.4.3(supports-color@10.2.2))(supports-color@10.2.2)
       bcryptjs:
         specifier: ^3.0.2
         version: 3.0.3
@@ -163,25 +151,19 @@ importers:
       pg:
         specifier: ^8.23.1
         version: 8.23.1
-      postprocessing:
-        specifier: ^6.39.5
-        version: 6.39.5(three@0.186.1)
-      react:
-        specifier: ^19.2.0
-        version: 19.2.8
-      react-dom:
-        specifier: ^19.2.0
-        version: 19.2.8(react@19.2.8)
-      react-router-dom:
-        specifier: ^7.9.4
-        version: 7.18.3(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-      three:
-        specifier: ^0.186.1
-        version: 0.186.1
     devDependencies:
       '@eslint/js':
         specifier: ^9.38.0
         version: 9.39.5
+      '@react-three/drei':
+        specifier: ^10.7.9
+        version: 10.7.9(@react-three/fiber@9.8.1(@types/react@19.3.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.186.1))(@types/react@19.3.0)(@types/three@0.186.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.186.1)
+      '@react-three/fiber':
+        specifier: ^9.8.1
+        version: 9.8.1(@types/react@19.3.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.186.1)
+      '@react-three/postprocessing':
+        specifier: ^3.2.0
+        version: 3.2.0(@react-three/fiber@9.8.1(@types/react@19.3.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.186.1))(@types/three@0.186.0)(postprocessing@6.39.5(three@0.186.1))(react@19.2.8)(three@0.186.1)
       '@types/connect-pg-simple':
         specifier: ^7.0.3
         version: 7.0.3
@@ -212,6 +194,9 @@ importers:
       '@vitejs/plugin-react':
         specifier: ^6.1.1
         version: 6.1.1(vite@8.2.2(@types/node@26.4.1)(esbuild@0.28.2)(tsx@4.23.13))
+      axios:
+        specifier: ^1.14.1
+        version: 1.20.0(debug@4.4.3(supports-color@10.2.2))(supports-color@10.2.2)
       concurrently:
         specifier: ^10.0.5
         version: 10.0.5
@@ -230,9 +215,24 @@ importers:
       globals:
         specifier: ^17.12.0
         version: 17.12.0
+      postprocessing:
+        specifier: ^6.39.5
+        version: 6.39.5(three@0.186.1)
+      react:
+        specifier: ^19.2.0
+        version: 19.2.8
+      react-dom:
+        specifier: ^19.2.0
+        version: 19.2.8(react@19.2.8)
+      react-router-dom:
+        specifier: ^7.9.4
+        version: 7.18.3(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       rimraf:
         specifier: ^6.0.1
         version: 6.1.3
+      three:
+        specifier: ^0.186.1
+        version: 0.186.1
       tsx:
         specifier: ^4.20.6
         version: 4.23.13

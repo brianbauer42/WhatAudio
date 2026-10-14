@@ -64,8 +64,11 @@ export const config = {
   databaseUrl: str("DATABASE_URL", isProduction ? undefined : DEV_DATABASE_URL),
   // Any S3-compatible store works: Garage locally, Garage or R2/B2 in production.
   s3: {
-    // Must be the URL browsers can reach, because presigned media links embed it.
+    // Presigned media links embed publicEndpoint below, not this one.
     endpoint: str("S3_ENDPOINT", "http://localhost:3900"),
+    // Where browsers reach the store, when that differs from where the server
+    // does (e.g. inside Docker, the server talks to http://garage:3900).
+    publicEndpoint: str("S3_PUBLIC_ENDPOINT", process.env.S3_ENDPOINT?.trim() || "http://localhost:3900"),
     region: str("S3_REGION", "garage"),
     bucket: str("S3_BUCKET", "whataudio"),
     accessKey: str("S3_ACCESS_KEY", isProduction ? undefined : DEV_S3_ACCESS_KEY),

@@ -17,16 +17,24 @@ import { config } from "./config.js";
  * development). Nothing here is Garage-specific: any store that speaks S3 and
  * supports presigned GETs will do.
  */
-export const s3 = new S3Client({
-  endpoint: config.s3.endpoint,
-  region: config.s3.region,
-  // Path-style URLs (host/bucket/key) need no wildcard DNS for the bucket.
-  forcePathStyle: true,
-  credentials: {
-    accessKeyId: config.s3.accessKey,
-    secretAccessKey: config.s3.secretKey,
-  },
-});
+const makeClient = (endpoint: string): S3Client =>
+  new S3Client({
+    endpoint,
+    region: config.s3.region,
+    // Path-style URLs (host/bucket/key) need no wildcard DNS for the bucket.
+    forcePathStyle: true,
+    credentials: {
+      accessKeyId: config.s3.accessKey,
+      secretAccessKey: config.s3.secretKey,
+    },
+  });
+
+export const s3 = makeClient(config.s3.endpoint);
+
+// Presigned URLs carry the signer's host, so they are minted against the
+// endpoint browsers use. Signing is offline; this client never sends requests.
+const publicS3 =
+  config.s3.publicEndpoint === config.s3.endpoint ? s3 : makeClient(config.s3.publicEndpoint);
 
 export const bucket = config.s3.bucket;
 
@@ -102,7 +110,7 @@ const HOUR_MS = 60 * 60 * 1000;
  * while each URL stays valid for at least another hour.
  */
 export const presignGet = (key: string): Promise<string> =>
-  getSignedUrl(s3, new GetObjectCommand({ Bucket: bucket, Key: key }), {
+  getSignedUrl(publicS3, new GetObjectCommand({ Bucket: bucket, Key: key }), {
     expiresIn: 2 * 60 * 60,
     signingDate: new Date(Math.floor(Date.now() / HOUR_MS) * HOUR_MS),
   });
