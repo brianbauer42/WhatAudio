@@ -1,0 +1,45 @@
+# Local development services. Start with `docker compose up -d`.
+#
+# Credentials here are development-only and match the defaults in .env.example.
+
+services:
+  postgres:
+    image: postgres:18
+    environment:
+      POSTGRES_USER: whataudio
+      POSTGRES_PASSWORD: whataudio
+      POSTGRES_DB: whataudio
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U whataudio -d whataudio"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+
+  # S3-compatible object storage for uploaded audio and art.
+  # --single-node skips the cluster layout step; --default-bucket creates the
+  # access key and bucket named below on first start.
+  garage:
+    image: dxflrs/garage:v2.4.1
+    command: /garage server --single-node --default-bucket
+    environment:
+      GARAGE_DEFAULT_ACCESS_KEY: GK0123456789abcdef01234567
+      GARAGE_DEFAULT_SECRET_KEY: 0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+      GARAGE_DEFAULT_BUCKET: whataudio
+    ports:
+      - "127.0.0.1:3900:3900" # S3 API
+      - "127.0.0.1:3903:3903" # admin API
+    volumes:
+      - ./docker/garage.toml:/etc/garage.toml:ro
+      - garage-meta:/var/lib/garage/meta
+      - garage-data:/var/lib/garage/data
+    restart: unless-stopped
+
+volumes:
+  postgres-data:
+  garage-meta:
+  garage-data:

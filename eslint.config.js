@@ -5,7 +5,7 @@ import reactHooks from "eslint-plugin-react-hooks";
 
 export default [
   {
-    ignores: ["node_modules/", "static/", "server-built/", "uploads/"],
+    ignores: ["node_modules/", "static/", "server-built/", "drizzle/"],
   },
   {
     // Browser code

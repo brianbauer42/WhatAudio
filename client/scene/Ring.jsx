@@ -62,13 +62,13 @@ export default function Ring({ tracks, focusedIndex, currentId, onSelect }) {
       <group ref={groupRef}>
         {tracks.map((track, index) => (
         <TrackCard
-          key={track._id}
+          key={track.id}
           track={track}
           index={index}
           angle={index * step}
           radius={radius}
           isFocused={index === focusedIndex}
-          isCurrent={track._id === currentId}
+          isCurrent={track.id === currentId}
           onSelect={onSelect}
         />
       ))}

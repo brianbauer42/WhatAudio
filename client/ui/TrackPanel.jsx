@@ -20,7 +20,7 @@ function EditForm({ track, onDone }) {
     setBusy(true);
     setError('');
     try {
-      await updateTrack(track._id, draft);
+      await updateTrack(track.id, draft);
       onDone();
     } catch (requestError) {
       if (requestError?.response?.status === 401) {
@@ -78,16 +78,16 @@ export default function TrackPanel() {
   useEffect(() => {
     setMode('view');
     setError('');
-  }, [focusedTrack?._id]);
+  }, [focusedTrack?.id]);
 
   if (!focusedTrack) return null;
 
   const track = focusedTrack;
-  const isCurrent = track._id === currentId;
+  const isCurrent = track.id === currentId;
 
   const handleDelete = async () => {
     try {
-      await removeTrack(track._id);
+      await removeTrack(track.id);
     } catch (requestError) {
       if (requestError?.response?.status === 401) {
         navigate('/login');
@@ -109,7 +109,7 @@ export default function TrackPanel() {
           {track.postBody && <p className="body">{track.postBody}</p>}
           <div className="meta">
             {track.sharedBy?.displayName ? `shared by ${track.sharedBy.displayName} · ` : ''}
-            {new Date(track.dateCreated).toLocaleDateString()}
+            {new Date(track.createdAt).toLocaleDateString()}
           </div>
           {error && <p className="message">{error}</p>}
           <div className="actions">

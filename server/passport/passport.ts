@@ -1,21 +1,26 @@
 import passport from "passport";
 import passportLocal from "passport-local";
-import { User } from "../models/User.js";
+import {
+  checkCredentials,
+  createUser,
+  findSignupConflict,
+  findUserById,
+} from "../db/users.js";
 
 const LocalStrategy = passportLocal.Strategy;
 
 // 1-32 characters long, containing upper and lowercase letters, numbers, and
-// underscores. Also keeps display names safe to use as an upload directory name.
+// underscores.
 const VALID_DISPLAY_NAME = /^[a-zA-Z0-9_]{1,32}$/;
 
 export const registerStrategies = (): void => {
   passport.serializeUser<string>((user, done) => {
-    done(null, String(user._id));
+    done(null, user.id);
   });
 
   passport.deserializeUser<string>(async (id, done) => {
     try {
-      done(null, await User.findById(id));
+      done(null, (await findUserById(id)) ?? false);
     } catch (error) {
       done(error);
     }
@@ -50,20 +55,20 @@ export const registerStrategies = (): void => {
             return;
           }
 
-          const existing = await User.findOne({
-            $or: [{ email }, { displayName }],
-          });
-          if (existing?.displayName === displayName) {
+          const conflict = await findSignupConflict(email, displayName);
+          if (conflict === "displayName") {
             done(null, false, { message: "User name already taken." });
             return;
           }
-          if (existing) {
+          if (conflict === "email") {
             done(null, false, { message: "This email already has an account." });
             return;
           }
 
-          // The pre-save hook hashes this before it reaches the database.
-          const user = await User.create({ email, displayName, password });
+          // createUser hashes the password before it reaches the database. A
+          // race with another signup surfaces as a unique violation, which the
+          // error handler turns into a 409.
+          const user = await createUser({ email, displayName, password });
           done(null, user, { message: `Welcome, ${user.displayName}!` });
         } catch (error) {
           done(error);
@@ -81,16 +86,14 @@ export const registerStrategies = (): void => {
       },
       async (email, password, done) => {
         try {
-          const user = await User.findOne({ email });
-          if (!user) {
-            done(null, false, { message: "Email not found!" });
+          const result = await checkCredentials(email, password);
+          if (!result.user) {
+            done(null, false, {
+              message: result.failure === "email" ? "Email not found!" : "Invalid password.",
+            });
             return;
           }
-          if (!(await user.validPassword(password))) {
-            done(null, false, { message: "Invalid password." });
-            return;
-          }
-          done(null, user, { message: `Welcome back, ${user.displayName}!` });
+          done(null, result.user, { message: `Welcome back, ${result.user.displayName}!` });
         } catch (error) {
           done(error);
         }

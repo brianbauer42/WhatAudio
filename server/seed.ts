@@ -1,21 +1,46 @@
 /**
- * Fills a local database with a dev account and a handful of freely licensed
- * tracks, so a fresh checkout has something to play. Run with `pnpm run seed`.
+ * Fills a local database and bucket with a dev account and a handful of freely
+ * licensed tracks, so a fresh checkout has something to play. Run with
+ * `pnpm run seed`.
  *
- * Safe to re-run: downloads are cached in the upload directory, and tracks
- * that already have a post are skipped.
+ * Safe to re-run: downloads are cached in .cache/seed/, track ids are derived
+ * from the manifest, and tracks that already exist are skipped.
  */
 import fs from "node:fs/promises";
 import path from "node:path";
+import { createHash } from "node:crypto";
 import { config } from "./config.js";
-import { connectToDatabase, disconnectFromDatabase } from "./db.js";
-import { Post } from "./models/Post.js";
-import { User } from "./models/User.js";
+import { closeDatabase, runMigrations } from "./db/index.js";
+import { getTrack, insertTrack } from "./db/tracks.js";
+import { createUser, findUserByDisplayName } from "./db/users.js";
+import {
+  contentTypeFor,
+  ensureBucket,
+  objectExists,
+  putObject,
+  s3,
+  trackObjectKey,
+} from "./storage.js";
 
 const DEV_USER = {
   email: "dev@example.com",
   password: "password",
   displayName: "dev",
+};
+
+// Works both from `server/` under tsx and from `server-built/` after `tsc`.
+const CACHE_DIR = path.resolve(import.meta.dirname, "..", ".cache", "seed");
+
+// Track ids are UUID v5 of the slug, so a re-run resolves to the same row and
+// the same object keys no matter what happened to the database in between.
+const SEED_NAMESPACE = "0c1f7a2e-5b3d-4e8f-9a6c-7d2b1e4f8a3c";
+const seedTrackId = (slug: string): string => {
+  const namespace = Buffer.from(SEED_NAMESPACE.replaceAll("-", ""), "hex");
+  const hash = createHash("sha1").update(namespace).update(slug).digest();
+  hash[6] = (hash[6]! & 0x0f) | 0x50; // version 5
+  hash[8] = (hash[8]! & 0x3f) | 0x80; // RFC 4122 variant
+  const hex = hash.subarray(0, 16).toString("hex");
+  return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
 };
 
 // Wikimedia asks automated clients to identify themselves, and rate-limits
@@ -175,23 +200,21 @@ const download = async (url: string, attempts = 4): Promise<Uint8Array> => {
   }
 };
 
+interface CachedFile {
+  bytes: Uint8Array;
+  extension: string;
+}
+
 /**
- * Downloads `url` into the user's upload directory as `<stem><ext>`, unless a
- * previous run already did. Returns the path relative to the upload root, as
- * stored on posts.
+ * Downloads `url` into the cache directory as `<stem><ext>`, unless a previous
+ * run already did, and hands back the bytes with their sniffed extension.
  */
-const fetchIntoUploads = async (
-  directory: string,
-  stem: string,
-  url: string,
-  allowed: Set<string>,
-): Promise<string> => {
-  const absoluteDir = path.join(config.uploadDir, directory);
-  const existing = (await fs.readdir(absoluteDir)).find(
+const fetchCached = async (stem: string, url: string, allowed: Set<string>): Promise<CachedFile> => {
+  const existing = (await fs.readdir(CACHE_DIR)).find(
     (name) => path.parse(name).name === stem && allowed.has(path.extname(name)),
   );
   if (existing) {
-    return `${directory}/${existing}`;
+    return { bytes: await fs.readFile(path.join(CACHE_DIR, existing)), extension: path.extname(existing) };
   }
 
   const bytes = await download(url);
@@ -202,22 +225,30 @@ const fetchIntoUploads = async (
   const fileName = `${stem}${extension}`;
   // Write then rename, so an interrupted run never leaves a truncated file
   // that a later run would mistake for a finished download.
-  const temporary = path.join(absoluteDir, `.${fileName}.part`);
+  const temporary = path.join(CACHE_DIR, `.${fileName}.part`);
   await fs.writeFile(temporary, bytes);
-  await fs.rename(temporary, path.join(absoluteDir, fileName));
-  console.log(`  saved ${fileName} (${(bytes.length / 1024 / 1024).toFixed(1)} MB)`);
-  return `${directory}/${fileName}`;
+  await fs.rename(temporary, path.join(CACHE_DIR, fileName));
+  console.log(`  downloaded ${fileName} (${(bytes.length / 1024 / 1024).toFixed(1)} MB)`);
+  return { bytes, extension };
+};
+
+const uploadIfMissing = async (key: string, file: CachedFile): Promise<void> => {
+  if (await objectExists(key)) {
+    return;
+  }
+  await putObject(key, file.bytes, contentTypeFor(file.extension));
+  console.log(`  uploaded ${key}`);
 };
 
 const AUDIO_EXTENSIONS = new Set([".mp3", ".ogg", ".flac"]);
 const IMAGE_EXTENSIONS = new Set([".jpg", ".png"]);
 
 const ensureDevUser = async () => {
-  const existing = await User.findOne({ displayName: DEV_USER.displayName });
+  const existing = await findUserByDisplayName(DEV_USER.displayName);
   if (existing) {
     return existing;
   }
-  const user = await User.create({ ...DEV_USER, isAdmin: true });
+  const user = await createUser({ ...DEV_USER, isAdmin: true });
   console.log(`Created admin account ${DEV_USER.email} / ${DEV_USER.password}`);
   return user;
 };
@@ -227,9 +258,10 @@ const main = async (): Promise<void> => {
     throw new Error("Refusing to seed with NODE_ENV=production.");
   }
 
-  await connectToDatabase();
+  await runMigrations();
+  await ensureBucket();
+  await fs.mkdir(CACHE_DIR, { recursive: true });
   const user = await ensureDevUser();
-  await fs.mkdir(path.join(config.uploadDir, user.displayName), { recursive: true });
 
   // Space the posts a minute apart in manifest order, so the playlist order is
   // stable no matter how long the downloads take.
@@ -240,43 +272,39 @@ const main = async (): Promise<void> => {
   for (const [index, track] of TRACKS.entries()) {
     console.log(`${track.artist} — ${track.title}`);
     try {
-      const audioUri = await fetchIntoUploads(
-        user.displayName,
-        track.slug,
-        track.audioUrl,
-        AUDIO_EXTENSIONS,
-      );
-      if (await Post.exists({ audioUri })) {
+      const id = seedTrackId(track.slug);
+      if (await getTrack(id)) {
         console.log("  already posted, skipping");
         continue;
       }
 
-      let artUri: string | undefined;
+      const audio = await fetchCached(track.slug, track.audioUrl, AUDIO_EXTENSIONS);
+      const audioKey = trackObjectKey(id, "audio", audio.extension);
+      await uploadIfMissing(audioKey, audio);
+
+      let artKey: string | null = null;
       if (track.artUrl) {
         try {
-          artUri = await fetchIntoUploads(
-            user.displayName,
-            `${track.slug}-art`,
-            track.artUrl,
-            IMAGE_EXTENSIONS,
-          );
+          const art = await fetchCached(`${track.slug}-art`, track.artUrl, IMAGE_EXTENSIONS);
+          artKey = trackObjectKey(id, "art", art.extension);
+          await uploadIfMissing(artKey, art);
         } catch (error) {
           // Art is decoration; the client falls back to a placeholder.
           console.warn(`  no art: ${(error as Error).message}`);
         }
       }
 
-      const post = await Post.create({
+      await insertTrack({
+        id,
+        userId: user.id,
         title: track.title,
         artist: track.artist,
         album: track.album,
-        postBody: track.postBody,
-        audioUri,
-        artUri,
-        sharedBy: user._id,
-        dateCreated: new Date(baseTime + (TRACKS.length - index) * 60_000),
+        body: track.postBody,
+        audioKey,
+        artKey,
+        createdAt: new Date(baseTime + (TRACKS.length - index) * 60_000),
       });
-      await User.updateOne({ _id: user._id }, { $push: { posts: post._id } });
       added += 1;
     } catch (error) {
       failed += 1;
@@ -294,4 +322,7 @@ main()
     console.error("Seeding failed:", error);
     process.exitCode = 1;
   })
-  .finally(() => disconnectFromDatabase());
+  .finally(() => {
+    s3.destroy();
+    return closeDatabase();
+  });
