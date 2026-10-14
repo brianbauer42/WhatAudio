@@ -1,4 +1,3 @@
-import { resourceUrl } from '../api.js';
 import { usePlayer } from '../state/PlayerContext.jsx';
 
 /** The playlist as a plain list, for browsers without WebGL or with reduced motion on. */
@@ -9,12 +8,12 @@ export default function FlatPlaylist() {
     <section className="flat">
       <ul>
         {tracks.map((track) => {
-          const art = resourceUrl(track.artUri);
+          const art = track.artUrl;
           const initial = (track.artist || track.title || '?').trim().charAt(0).toUpperCase();
           return (
             <li
-              key={track._id}
-              className={track._id === currentId ? 'current' : ''}
+              key={track.id}
+              className={track.id === currentId ? 'current' : ''}
               onClick={() => play(track)}
             >
               {art ? <img src={art} alt="" loading="lazy" /> : <div className="art">{initial}</div>}

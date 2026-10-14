@@ -10,7 +10,3 @@ export function errorMessage(error, fallback = 'Something went wrong.') {
   return error?.response?.data?.message || error?.message || fallback;
 }
 
-/** Uploaded audio and art are served by Express under /resources. */
-export function resourceUrl(uri) {
-  return uri ? `/resources/${uri}` : null;
-}

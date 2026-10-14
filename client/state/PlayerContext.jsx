@@ -7,7 +7,7 @@ import {
   useRef,
   useState,
 } from 'react';
-import { api, resourceUrl } from '../api.js';
+import { api } from '../api.js';
 
 const PlayerContext = createContext(null);
 
@@ -49,11 +49,11 @@ export function PlayerProvider({ children }) {
     const audio = audioRef.current;
     if (!track || !audio) return;
     const token = (playToken.current += 1);
-    setCurrentId(track._id);
-    const index = tracksRef.current.findIndex((item) => item._id === track._id);
+    setCurrentId(track.id);
+    const index = tracksRef.current.findIndex((item) => item.id === track.id);
     if (index !== -1) setFocusedIndex(index);
     setStatus(`${track.artist || 'Unknown artist'} — ${track.title || 'Untitled'}`);
-    audio.src = resourceUrl(track.audioUri);
+    audio.src = track.audioUrl;
     audio.play().catch((error) => {
       // AbortError means we interrupted playback ourselves, by switching
       // tracks or pausing. Only a genuine failure (an autoplay block, say)
@@ -68,7 +68,7 @@ export function PlayerProvider({ children }) {
     (offset) => {
       const list = tracksRef.current;
       if (list.length === 0) return;
-      const index = list.findIndex((item) => item._id === currentIdRef.current);
+      const index = list.findIndex((item) => item.id === currentIdRef.current);
       if (index === -1) {
         play(list[0]);
         return;
@@ -144,7 +144,7 @@ export function PlayerProvider({ children }) {
 
   const updateTrack = useCallback(async (id, patch) => {
     const response = await api.put(`/songs/${id}`, patch);
-    setTracks((list) => list.map((item) => (item._id === id ? response.data : item)));
+    setTracks((list) => list.map((item) => (item.id === id ? response.data : item)));
     if (currentIdRef.current === id) {
       const track = response.data;
       setStatus(`${track.artist || 'Unknown artist'} — ${track.title || 'Untitled'}`);
@@ -161,7 +161,7 @@ export function PlayerProvider({ children }) {
       setStatus(IDLE_TEXT);
     }
     setTracks((list) => {
-      const nextList = list.filter((item) => item._id !== id);
+      const nextList = list.filter((item) => item.id !== id);
       setFocusedIndex((index) => Math.min(index, Math.max(nextList.length - 1, 0)));
       return nextList;
     });
@@ -175,7 +175,7 @@ export function PlayerProvider({ children }) {
       focusedIndex,
       focusedTrack: tracks[focusedIndex] ?? null,
       currentId,
-      currentTrack: tracks.find((item) => item._id === currentId) ?? null,
+      currentTrack: tracks.find((item) => item.id === currentId) ?? null,
       isPlaying,
       status,
       loadTracks,

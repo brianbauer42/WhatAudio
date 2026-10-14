@@ -12,33 +12,30 @@ and Edge still don't support FLAC streaming, so prefer `.mp3`, `.ogg`, or
 
 - Node.js 26 (`.nvmrc` pins it; run `nvm use` in the project directory)
 - [pnpm](https://pnpm.io) 12 — `npm install -g pnpm`
-- A MongoDB instance
+- Docker, for the local Postgres and object storage containers (or your own
+  Postgres and any S3-compatible bucket; see [Storage](#storage-and-database))
 
 ## Setup
 
 ```
 nvm use
 pnpm install
+docker compose up -d postgres garage
 cp .env.example .env
 ```
 
-Then edit `.env`. Every value has a working default for local development, but
-you should at minimum set:
+`docker compose up -d postgres garage` starts Postgres 18 and [Garage](https://garagehq.deuxfleurs.fr),
+a small S3-compatible object store, with the bucket and credentials that
+`.env.example` already points at. Every value in `.env` has a working default for
+local development, but you should at minimum set:
 
 - `SESSION_SECRET` — any long random string. Generate one with
   `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`.
   This is **required** when `NODE_ENV=production`.
-- `MONGO_URI` — points at your MongoDB instance.
 
-See `.env.example` for the full list, including upload limits and whether
-anyone may register.
-
-No MongoDB handy? Docker will do:
-
-```
-docker run -d --name whataudio-mongo -p 127.0.0.1:27017:27017 \
-  -v whataudio-mongo-data:/data/db --restart unless-stopped mongo:8
-```
+For a real deployment you also need `DATABASE_URL`, `S3_ENDPOINT`, `S3_BUCKET`,
+`S3_ACCESS_KEY`, `S3_SECRET_KEY`, and `CORS_ORIGINS`. See `.env.example` for the
+full list, including upload limits and whether anyone may register.
 
 ### Sample tracks
 
@@ -47,12 +44,12 @@ pnpm run seed
 ```
 
 This creates an admin account (`dev@example.com` / `password`) and downloads
-about 80 MB of freely licensed music into `uploads/dev/`: Kevin MacLeod tracks
-from incompetech.com (CC BY 4.0), plus public-domain and CC0 classical recordings
-and public-domain composer portraits from Wikimedia Commons. Each track's post
-carries its attribution. It's safe to re-run: downloads are cached, and tracks
-that are already posted are skipped. It refuses to run with
-`NODE_ENV=production`.
+about 80 MB of freely licensed music into the bucket: Kevin MacLeod tracks from
+incompetech.com (CC BY 4.0), plus public-domain and CC0 classical recordings and
+public-domain composer portraits from Wikimedia Commons. Each track's post
+carries its attribution. It's safe to re-run: downloads are cached in
+`.cache/seed/`, and tracks that are already posted are skipped. It refuses to run
+with `NODE_ENV=production`.
 
 ## Running it
 
@@ -71,8 +68,35 @@ pnpm run dev
 `pnpm run dev` starts two processes: the API on port 8080 (restarted by `tsx`
 whenever a file under `server/` changes) and the Vite dev server on port 3000
 with React Fast Refresh. **Open http://localhost:3000** in development — it
-proxies `/api` and `/resources` through to the API. In production everything is
-served from port 8080.
+proxies `/api` through to the API. In production everything is served from
+port 8080.
+
+The server applies any pending database migrations on startup, so a fresh
+database needs no separate step.
+
+### Everything in Docker
+
+```
+docker compose up -d --build
+```
+
+This builds the app image (`Dockerfile`, on `node:26-alpine`) and starts it
+alongside Postgres and Garage, served at **http://localhost:8080**. It runs the
+production build with the development credentials from `compose.yaml`, plain
+HTTP cookies, and registration open. Set `SESSION_SECRET` in `.env` to override
+the placeholder secret. `pnpm run seed` from the host fills it with sample tracks
+as usual.
+
+To run the app with `pnpm run dev` instead, start just the backing services, so
+the container doesn't take port 8080:
+
+```
+docker compose up -d postgres garage
+```
+
+Inside the stack the server reaches Garage at `http://garage:3900`, while
+browsers fetch media from `http://localhost:3900`. `S3_PUBLIC_ENDPOINT` names
+that browser-facing URL, and presigned links are signed against it.
 
 ## The ring
 
@@ -93,6 +117,38 @@ development and closed in production by default. To create accounts on a
 production server, set `ALLOW_REGISTRATIONS=true`, register, then remove it and
 restart.
 
+## Storage and database
+
+**Postgres** holds users, tracks, and login sessions. The schema lives in
+`server/db/schema.ts` and is managed with [Drizzle](https://orm.drizzle.team):
+after changing the schema, run `pnpm run db:generate` to write a new SQL
+migration into `drizzle/` and commit it. Migrations run automatically when the
+server starts (and when seeding); `pnpm run db:migrate` applies them by hand.
+Track search is a Postgres full-text index with prefix matching, so "bac" finds
+Bach.
+
+**Uploaded audio and art** go into an S3-compatible bucket rather than onto the
+server's disk, so the app can move between machines and the bucket can be backed
+up on its own. Uploads stream straight from the request into the bucket under
+`tracks/<track id>/`. The bucket is private: the client plays
+`/api/songs/<id>/audio` (and shows `/api/songs/<id>/art`), and the API answers
+with a redirect to a presigned bucket URL that is valid for one to two hours.
+That keeps storage details out of the browser, stops permanent hotlinks, and
+leaves one place to add a login requirement for listening later.
+
+Locally the bucket is Garage from `compose.yaml` (`docker/garage.toml` holds its
+development-only config). In production, any S3-compatible store works: Garage on
+your own server, Cloudflare R2, Backblaze B2, Hetzner Object Storage, and so on.
+Two things to get right:
+
+- `S3_ENDPOINT` must be the URL **browsers** can reach, since presigned links
+  embed it. Garage does not terminate TLS, so put it behind your reverse proxy
+  (for example `https://s3.what.audio` → Garage's port 3900) and use that URL.
+- `CORS_ORIGINS` must list your site's origin. The ring paints album art into
+  WebGL textures, which the browser only allows when the bucket answers with
+  CORS headers for the page's origin. The server writes this CORS rule to the
+  bucket on startup.
+
 ## Other scripts
 
 | Command | What it does |
@@ -102,7 +158,10 @@ restart.
 | `pnpm run typecheck` | Type-check the server without emitting |
 | `pnpm run lint` | ESLint over the client and build config |
 | `pnpm run clean` | Remove `static/` and `server-built/` |
-| `pnpm run seed` | Create a dev account and download sample tracks |
+| `pnpm run seed` | Create a dev account and upload sample tracks |
+| `pnpm run db:generate` | Write a migration for schema changes into `drizzle/` |
+| `pnpm run db:migrate` | Apply pending migrations by hand |
+| `pnpm run db:studio` | Browse the database in Drizzle Studio |
 
 ## Layout
 
@@ -113,11 +172,12 @@ restart.
   - `ui/`, `pages/` — DOM overlays and the login / register / share / contact pages
   - `theme.js` and `styles/base.css` — the Blade Runner 2049 palette, kept in sync
 - `server/` — TypeScript Express API, compiled by `tsc` into `server-built/`
+  - `db/` — Drizzle schema, connection, and the user and track queries
+  - `storage.ts` — the S3 client, presigned URLs, and bucket setup
+  - `uploadManagement.ts` — multer storage engine that streams uploads into the bucket
+- `drizzle/` — generated SQL migrations, applied on startup
+- `Dockerfile`, `compose.yaml`, `docker/` — the app image, plus local Postgres and Garage
 - `public/` — static assets copied verbatim into the build (the favicon)
-- `uploads/` — uploaded audio and album art, served at `/resources`
 
-Project-level pnpm settings (dependency overrides, allowed build scripts) live
-in `pnpm-workspace.yaml` — pnpm 12 no longer reads them from `package.json`.
-
-Deleting a track removes its database record and its audio and album art from
-`uploads/`.
+Project-level pnpm settings (allowed build scripts) live in `pnpm-workspace.yaml` —
+pnpm 12 no longer reads them from `package.json`.

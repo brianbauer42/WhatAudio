@@ -3,12 +3,12 @@ import express from "express";
 import type { NextFunction, Request, Response } from "express";
 import cors from "cors";
 import session from "express-session";
-import MongoStore from "connect-mongo";
+import connectPgSimple from "connect-pg-simple";
 import passport from "passport";
-import mongoose from "mongoose";
+import pg from "pg";
 
 import { config } from "./config.js";
-import { connectToDatabase, disconnectFromDatabase } from "./db.js";
+import { closeDatabase, pool, runMigrations } from "./db/index.js";
 import { HttpError } from "./httpError.js";
 import { registerStrategies } from "./passport/passport.js";
 import {
@@ -18,22 +18,26 @@ import {
   requireLogin,
   whoAmI,
 } from "./passport/auth.js";
-import { receiveTrackFiles } from "./uploadManagement.js";
-import { ensureUploadDirExists } from "./onStartup.js";
+import { assignTrackId, receiveTrackFiles } from "./uploadManagement.js";
+import { ensureBucket } from "./storage.js";
 import { getAll as getAllUsers, read as readUser } from "./controllers/userControl.js";
 import {
-  create as createPost,
-  getAll as getAllPosts,
-  read as readPost,
-  remove as removePost,
-  search as searchPosts,
-  update as updatePost,
-} from "./controllers/postControl.js";
+  create as createTrack,
+  getAll as getAllTracks,
+  read as readTrack,
+  remove as removeTrack,
+  search as searchTracks,
+  streamArt,
+  streamAudio,
+  update as updateTrack,
+} from "./controllers/trackControl.js";
 
 // Works both from `server/` under tsx and from `server-built/` after `tsc`.
 const projectRoot = path.resolve(import.meta.dirname, "..");
 const publicDir = path.join(projectRoot, "public");
 const staticDir = path.join(projectRoot, "static");
+
+const PgSessionStore = connectPgSimple(session);
 
 const buildApp = (): express.Express => {
   const app = express();
@@ -47,8 +51,9 @@ const buildApp = (): express.Express => {
   app.use(
     session({
       secret: config.sessionSecret,
-      // Sessions live in MongoDB so they survive restarts and don't leak memory.
-      store: MongoStore.create({ client: mongoose.connection.getClient() }),
+      // Sessions live in Postgres so they survive restarts and don't leak
+      // memory. The table is created by the migrations, not by the store.
+      store: new PgSessionStore({ pool, tableName: "session", createTableIfMissing: false }),
       resave: false,
       saveUninitialized: false,
       cookie: {
@@ -66,7 +71,6 @@ const buildApp = (): express.Express => {
   // "/" must fall through to the built shell in static/ instead.
   app.use(express.static(publicDir, { index: false }));
   app.use("/static", express.static(staticDir));
-  app.use("/resources", express.static(config.uploadDir));
 
   // ---------------- API ROUTES ----------------
   // Account creation and authentication.
@@ -80,12 +84,17 @@ const buildApp = (): express.Express => {
   app.get("/api/user/:id", requireLogin, readUser);
 
   // Posting and reading tracks.
-  app.post("/api/songs/upload", requireLogin, receiveTrackFiles, createPost);
-  app.get("/api/songs", getAllPosts);
-  app.get("/api/songs/search", searchPosts);
-  app.get("/api/songs/:id", readPost);
-  app.put("/api/songs/:id", requireLogin, updatePost);
-  app.delete("/api/songs/:id", requireLogin, removePost);
+  app.post("/api/songs/upload", requireLogin, assignTrackId, receiveTrackFiles, createTrack);
+  app.get("/api/songs", getAllTracks);
+  app.get("/api/songs/search", searchTracks);
+  app.get("/api/songs/:id", readTrack);
+  app.put("/api/songs/:id", requireLogin, updateTrack);
+  app.delete("/api/songs/:id", requireLogin, removeTrack);
+
+  // Media. These redirect to short-lived bucket URLs, and are the one place a
+  // login requirement for listening would go.
+  app.get("/api/songs/:id/audio", streamAudio);
+  app.get("/api/songs/:id/art", streamArt);
 
   app.get("/api/contactemail", (_req: Request, res: Response) => {
     res.json({ email: config.contactPageEmail });
@@ -98,7 +107,7 @@ const buildApp = (): express.Express => {
   // Anything else is a client-side route: hand back the built single-page app.
   // Asset prefixes are excluded so a missing file 404s instead of quietly
   // returning index.html with a 200.
-  const assetPrefixes = ["/resources/", "/static/"];
+  const assetPrefixes = ["/static/"];
   app.use((req: Request, res: Response, next: NextFunction) => {
     if (req.method !== "GET" && req.method !== "HEAD") {
       next();
@@ -110,7 +119,7 @@ const buildApp = (): express.Express => {
     }
     res.sendFile(path.join(staticDir, "index.html"), (error) => {
       if (error) {
-        next(new HttpError(404, "Client bundle not found. Run `npm run build:client` first."));
+        next(new HttpError(404, "Client bundle not found. Run `pnpm run build:client` first."));
       }
     });
   });
@@ -120,12 +129,9 @@ const buildApp = (): express.Express => {
       res.status(error.status).json({ message: error.message });
       return;
     }
-    if (error instanceof mongoose.Error.CastError) {
-      res.status(400).json({ message: `Invalid ${error.path}` });
-      return;
-    }
-    if (error instanceof mongoose.Error.ValidationError) {
-      res.status(400).json({ message: error.message });
+    // Unique violation: two requests raced past the same pre-check.
+    if (error instanceof pg.DatabaseError && error.code === "23505") {
+      res.status(409).json({ message: "That already exists." });
       return;
     }
     console.error(error);
@@ -136,8 +142,8 @@ const buildApp = (): express.Express => {
 };
 
 const main = async (): Promise<void> => {
-  await connectToDatabase();
-  await ensureUploadDirExists();
+  await runMigrations();
+  await ensureBucket();
 
   const server = buildApp().listen(config.port, config.host, () => {
     console.log(
@@ -149,7 +155,7 @@ const main = async (): Promise<void> => {
   const shutdown = (signal: string) => {
     console.log(`\n${signal} received, shutting down...`);
     server.close(() => {
-      disconnectFromDatabase().finally(() => process.exit(0));
+      closeDatabase().finally(() => process.exit(0));
     });
   };
   process.on("SIGINT", () => shutdown("SIGINT"));

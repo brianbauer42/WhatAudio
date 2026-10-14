@@ -2,7 +2,6 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { Color, MathUtils } from 'three';
 import { CARD_WIDTH, CARD_HEIGHT, drawCard, makeCardTexture } from './cardTexture.js';
-import { resourceUrl } from '../api.js';
 import { palette } from '../theme.js';
 
 // Frame colours brighter than 1.0 cross the bloom threshold and glow. The
@@ -40,9 +39,12 @@ export default function TrackCard({ track, index, angle, radius, isFocused, isCu
       drawCard(canvas, track, loadedImage);
       texture.needsUpdate = true;
     };
-    const url = resourceUrl(track.artUri);
+    const url = track.artUrl;
     if (url) {
       image = new Image();
+      // Art comes from the storage bucket, a different origin. Without CORS
+      // the canvas would be tainted and WebGL would refuse the texture.
+      image.crossOrigin = 'anonymous';
       image.onload = () => redraw(image);
       image.src = url;
     }

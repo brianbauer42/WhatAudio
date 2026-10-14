@@ -26,10 +26,9 @@ export default defineConfig(({ command }) => ({
   },
   server: {
     port: 3000,
-    // The API and uploaded media still come from the Express server.
+    // The API still comes from the Express server; media redirects to the bucket.
     proxy: {
       "/api": API_TARGET,
-      "/resources": API_TARGET,
     },
   },
 }));

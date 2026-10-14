@@ -2,7 +2,7 @@ import passport from "passport";
 import type { NextFunction, Request, Response } from "express";
 import { config } from "../config.js";
 import { HttpError } from "../httpError.js";
-import type { UserDocument } from "../models/User.js";
+import type { User } from "../db/users.js";
 
 interface AuthInfo {
   message?: string;
@@ -13,11 +13,11 @@ const authenticate = (
   strategy: string,
   req: Request,
   res: Response,
-): Promise<{ user: UserDocument | false; info: AuthInfo }> =>
+): Promise<{ user: User | false; info: AuthInfo }> =>
   new Promise((resolve, reject) => {
     const handler = passport.authenticate(
       strategy,
-      (error: unknown, user: UserDocument | false, info: AuthInfo = {}) => {
+      (error: unknown, user: User | false, info: AuthInfo = {}) => {
         if (error) {
           reject(error);
         } else {
